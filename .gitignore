@@ -33,3 +33,25 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Idea files
+.idea
+*.iml
+
+# Virtual env
+ve*
+
+.*~
+*~
+.*.swp
+
+# sublime project files
+yadtshell.sublime*
+.ropeproject
+.codeintel
+
+# sonar analysis
+.sonar
+
+# MACOS specific files
+.DS_Store
