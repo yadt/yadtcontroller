@@ -45,6 +45,3 @@ def write(text):
 
 def print_name_and_version_and_exit():
     write('yadtcontroller {0}'.format(__version__))
-
-
-
