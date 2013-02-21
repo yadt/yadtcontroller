@@ -27,13 +27,15 @@ class YadtControllerTests(unittest.TestCase):
     def tearDown(self):
         unstub()
 
-    def test_should_write_name_and_version_to_stdout(self):
+    def test_should_write_name_and_version_to_stdout_and_exit(self):
         when(yadt_controller).write(any_value()).thenReturn(None)
         when(yadt_controller).docopt(any_value()).thenReturn({})
+        when(yadt_controller.sys).exit(any_value).thenReturn(None)
 
         yadt_controller.print_name_and_version_and_exit()
 
         verify(yadt_controller).write('yadtcontroller ${version}')
+        verify(yadt_controller.sys).exit(0)
 
     def test_should_parse_command_line_using_docopt_with_program_version_when_run(self):
         when(yadt_controller).write(any_value()).thenReturn(None)
