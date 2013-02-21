@@ -9,4 +9,4 @@ install:
   - pip install pybuilder
   - pyb install_dependencies
 
-script: "pyb --debug"
+script: "pyb --debug -v"
