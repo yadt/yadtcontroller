@@ -23,6 +23,7 @@ __usage__ = \
 """yadtcontroller.
 
 Usage:
+yadtcontroller (-h | --help)    
 yadtcontroller --version
 
 Options:

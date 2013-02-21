@@ -51,3 +51,4 @@ class YadtControllerTests(unittest.TestCase):
         yadt_controller.run()
 
         verify(yadt_controller).print_name_and_version_and_exit()
+
