@@ -18,6 +18,7 @@ from pythonbuilder.core import use_plugin, init, Author
 use_plugin('copy_resources')
 use_plugin('filter_resources')
 
+use_plugin('python.flake8')
 use_plugin('python.core')
 use_plugin('python.unittest')
 use_plugin('python.install_dependencies')
@@ -31,13 +32,14 @@ name = 'yadtcontroller'
 url = 'https://github.com/yadt/yadtcontroller'
 version = '0.0.1'
 
-default_task = ['publish']
+default_task = ['analyze', 'publish']
 
 
 @init
 def set_properties(project):
     project.build_depends_on('mockito')
     project.build_depends_on('docopt')
+    project.build_depends_on('flake8')
 
     project.set_property('copy_resources_target', '$dir_dist')
     project.get_property('filter_resources_glob').append('**/yadtcontroller/__init__.py')
