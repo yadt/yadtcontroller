@@ -17,10 +17,34 @@
 __version__ = '${version}'
 
 from sys import stdout
+from docopt import docopt
+
+__usage__ = \
+"""yadtcontroller.
+
+Usage:
+yadtcontroller --version
+
+Options:
+-h --help     Show this screen.
+--version     Show version.
+
+"""
+
+
+def run():
+    parsed_arguments = docopt(__usage__, version=__version__)
+    print parsed_arguments
+    if parsed_arguments and parsed_arguments['--version']:
+        print_name_and_version_and_exit()
+
 
 def write(text):
     stdout.write(text)
 
 
-def run():
+def print_name_and_version_and_exit():
     write('yadtcontroller {0}'.format(__version__))
+
+
+
