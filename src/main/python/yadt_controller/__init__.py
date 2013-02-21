@@ -19,11 +19,11 @@ __version__ = '${version}'
 from sys import stdout
 from docopt import docopt
 
-__usage__ = \
-"""yadtcontroller.
+__usage__ = """
+yadtcontroller
 
 Usage:
-yadtcontroller (-h | --help)    
+yadtcontroller (-h | --help)
 yadtcontroller --version
 
 Options:
