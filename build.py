@@ -33,7 +33,7 @@ authors = [Author('Marcel Wolf', 'marcel.wolf@immobilienscout24.de'),
 license = 'GNU GPL v3'
 name = 'yadtcontroller'
 url = 'https://github.com/yadt/yadtcontroller'
-version = '0.0.1'
+version = '0.0.2'
 
 default_task = ['analyze', 'publish']
 
