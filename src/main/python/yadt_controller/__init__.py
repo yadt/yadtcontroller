@@ -35,7 +35,6 @@ Options:
 
 def run():
     parsed_arguments = docopt(__usage__, version=__version__)
-    print parsed_arguments
     if parsed_arguments and parsed_arguments['--version']:
         print_name_and_version_and_exit()
 
