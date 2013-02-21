@@ -15,14 +15,15 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from pythonbuilder.core import use_plugin, init, Author
 
+use_plugin('python.core')
+use_plugin('python.install_dependencies')
+
 use_plugin('copy_resources')
 use_plugin('filter_resources')
 
-use_plugin('python.flake8')
-use_plugin('python.core')
 use_plugin('python.unittest')
-use_plugin('python.install_dependencies')
 use_plugin('python.distutils')
+use_plugin('python.pep8')
 
 authors = [Author('Marcel Wolf', 'marcel.wolf@immobilienscout24.de'),
            Author('Maximilien Riehl', 'maximilien.riehl@gmail.com'),
@@ -39,7 +40,7 @@ default_task = ['analyze', 'publish']
 def set_properties(project):
     project.build_depends_on('mockito')
     project.build_depends_on('docopt')
-    project.build_depends_on('flake8')
+    project.build_depends_on('pep8')
 
     project.set_property('copy_resources_target', '$dir_dist')
     project.get_property('filter_resources_glob').append('**/yadtcontroller/__init__.py')
