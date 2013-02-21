@@ -14,13 +14,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__version__ = '${version}'
-
-import sys
-from sys import stdout
-from docopt import docopt
-
-__usage__ = """
+"""
 yadtcontroller
 
 Usage:
@@ -33,9 +27,15 @@ Options:
 
 """
 
+__version__ = '${version}'
+
+import sys
+from sys import stdout
+from docopt import docopt
+
 
 def run():
-    parsed_arguments = docopt(__usage__, version=__version__)
+    parsed_arguments = docopt(__doc__, version=__version__)
     if _show_version_option_was_given(parsed_arguments):
         print_name_and_version_and_exit()
 

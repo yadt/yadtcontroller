@@ -43,7 +43,7 @@ class YadtControllerTests(unittest.TestCase):
 
         yadt_controller.run()
 
-        verify(yadt_controller).docopt(any_value(), version='${version}')
+        verify(yadt_controller).docopt(yadt_controller.__doc__, version='${version}')
 
     def test_should_print_name_and_version_when_version_option_was_found(self):
         mock_arguments = {'--version': True}
