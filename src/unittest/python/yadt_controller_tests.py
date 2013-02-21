@@ -52,3 +52,18 @@ class YadtControllerTests(unittest.TestCase):
 
         verify(yadt_controller).print_name_and_version_and_exit()
 
+    def test_show_version_option_was_given_should_return_true_when_option_is_given(self):
+        arguments = {'--version': True}
+        self.assertTrue(yadt_controller._show_version_option_was_given(arguments))
+
+    def test_show_version_option_was_given_should_return_false_when_option_is_not_given_or_none(self):
+        arguments = {'--version': False}
+        self.assertFalse(yadt_controller._show_version_option_was_given(arguments))
+
+
+        arguments = {'--version': None}
+        self.assertFalse(yadt_controller._show_version_option_was_given(arguments))
+
+    def test_show_version_option_was_given_should_return_false_when_option_is_not_present(self):
+        arguments = {}
+        self.assertFalse(yadt_controller._show_version_option_was_given(arguments))

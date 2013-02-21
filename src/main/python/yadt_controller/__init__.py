@@ -35,7 +35,7 @@ Options:
 
 def run():
     parsed_arguments = docopt(__usage__, version=__version__)
-    if parsed_arguments and parsed_arguments['--version']:
+    if _show_version_option_was_given(parsed_arguments):
         print_name_and_version_and_exit()
 
 
@@ -45,3 +45,7 @@ def write(text):
 
 def print_name_and_version_and_exit():
     write('yadtcontroller {0}'.format(__version__))
+
+
+def _show_version_option_was_given(parsed_arguments):
+    return parsed_arguments and parsed_arguments['--version']
