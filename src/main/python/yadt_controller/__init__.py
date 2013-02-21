@@ -29,25 +29,8 @@ Options:
 
 __version__ = '${version}'
 
-import sys
-from sys import stdout
 from docopt import docopt
 
 
 def run():
-    parsed_arguments = docopt(__doc__, version=__version__)
-    if _show_version_option_was_given(parsed_arguments):
-        print_name_and_version_and_exit()
-
-
-def write(text):
-    stdout.write(text)
-
-
-def print_name_and_version_and_exit():
-    write('yadtcontroller {0}'.format(__version__))
-    sys.exit(0)
-
-
-def _show_version_option_was_given(parsed_arguments):
-    return parsed_arguments and parsed_arguments['--version']
+    docopt(__doc__, version=__version__)
