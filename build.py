@@ -47,6 +47,7 @@ def set_properties(project):
     project.depends_on('yadtbroadcast-client')
 
     project.get_property('filter_resources_glob').append('**/yadtcontroller/__init__.py')
+    project.set_property('copy_resources_target', '$dir_dist')
     project.get_property('copy_resources_glob').append('setup.cfg')
 
 
