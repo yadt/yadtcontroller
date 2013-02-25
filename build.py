@@ -32,7 +32,7 @@ authors = [Author('Marcel Wolf', 'marcel.wolf@immobilienscout24.de'),
 license = 'GNU GPL v3'
 name = 'yadtcontroller'
 url = 'https://github.com/yadt/yadtcontroller'
-version = '0.0.2'
+version = '0.0.3'
 
 default_task = ['analyze', 'publish']
 
@@ -46,6 +46,7 @@ def set_properties(project):
     project.depends_on('yadtbroadcast-client')
 
     project.get_property('filter_resources_glob').append('**/yadtcontroller/__init__.py')
+
 
 @init(environments="teamcity")
 def set_properties_for_teamcity(project):
