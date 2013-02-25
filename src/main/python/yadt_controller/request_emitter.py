@@ -14,20 +14,22 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
-from mockito import when, verify, unstub, any as any_value, mock
 
-import yadt_controller
+class RequestEmitter(object):
+    def _validate_port(self, port):
+        if type(port) != int:
+            error_message = 'port must be an integer, got {0} instead'.format(type(port))
+            raise ValueError(error_message)
 
+        if port < 0:
+            error_message = 'port must be greater than 0, got {0}'.format(port)
+            raise ValueError(error_message)
 
-class YadtControllerTests(unittest.TestCase):
+        if port > 65535:
+            error_message = 'port {0} out of range, use port between 0 and 65535'.format(port)
+            raise ValueError(error_message)
 
-    def tearDown(self):
-        unstub()
-
-    def test_should_parse_command_line_using_docopt_with_program_version_when_run(self):
-        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({})
-
-        yadt_controller.run()
-
-        verify(yadt_controller).docopt(yadt_controller.__doc__, version='${version}')
+    def __init__(self, host, port):
+        self._validate_port(port)
+        self.host = host
+        self.port = port

@@ -17,17 +17,25 @@
 import unittest
 from mockito import when, verify, unstub, any as any_value, mock
 
-import yadt_controller
+from yadt_controller.request_emitter import RequestEmitter
 
 
-class YadtControllerTests(unittest.TestCase):
+class RequestEmitterTests(unittest.TestCase):
 
     def tearDown(self):
         unstub()
 
-    def test_should_parse_command_line_using_docopt_with_program_version_when_run(self):
-        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({})
+    def test_should_instantiate_request_emitter_with_host_and_port(self):
+        request_emitter = RequestEmitter('host', 8081)
 
-        yadt_controller.run()
+        self.assertEqual(request_emitter.host, 'host')
+        self.assertEqual(request_emitter.port, 8081)
 
-        verify(yadt_controller).docopt(yadt_controller.__doc__, version='${version}')
+    def test_should_raise_exception_when_port_is_not_an_integer(self):
+        self.assertRaises(ValueError, RequestEmitter, 'host', 'notaninteger')
+
+    def test_should_raise_exception_when_port_is_negative(self):
+        self.assertRaises(ValueError, RequestEmitter, 'host', -80)
+
+    def test_should_raise_exception_if_port_is_greater_than_65535(self):
+        self.assertRaises(ValueError, RequestEmitter, 'host', 65536)
