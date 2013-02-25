@@ -44,6 +44,7 @@ def set_properties(project):
     project.build_depends_on('flake8')
 
     project.depends_on('docopt')
+    project.depends_on('yadtcommons')
     project.depends_on('yadtbroadcast-client')
 
     project.get_property('filter_resources_glob').append('**/yadtcontroller/__init__.py')
