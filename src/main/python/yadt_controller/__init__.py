@@ -40,15 +40,20 @@ from yadt_controller.request_emitter import RequestEmitter
 
 
 def run():
-    parsed_options = docopt(__doc__, version=__version__)
+    config = _determine_configuration()
 
+    RequestEmitter(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY])
+
+
+def _determine_configuration():
+    parsed_options = docopt(__doc__, version=__version__)
     configuration_file_name = '/etc/yadtshell/controller.cfg'
     if parsed_options.get('--config-file') is not None:
         configuration_file_name = parsed_options['--config-file']
     config = load(configuration_file_name)
-
     if parsed_options.get('--broadcaster-host') is not None:
         config[BROADCASTER_HOST_KEY] = parsed_options['--broadcaster-host']
     if parsed_options.get('--broadcaster-port') is not None:
         config[BROADCASTER_PORT_KEY] = parsed_options['--broadcaster-port']
-    RequestEmitter(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY])
+    return config
+
