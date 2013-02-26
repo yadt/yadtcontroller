@@ -15,7 +15,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from yadtbroadcastclient import WampBroadcaster
-
+from twisted.internet import reactor
 
 class RequestEmitter(object):
     def _validate_port(self, port):
@@ -37,4 +37,5 @@ class RequestEmitter(object):
         self.port = port
 
     def initialize(self):
-        WampBroadcaster(self.host, self.port)
+        wamp_broadcaster = WampBroadcaster(self.host, self.port)
+        reactor.callWhenRunning(wamp_broadcaster.connect)

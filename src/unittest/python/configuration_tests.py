@@ -30,6 +30,7 @@ from yadtcommons.configuration import YadtConfigParser
 
 
 class ControllerConfigLoaderTests (unittest.TestCase):
+
     def test_should_create_instance_of_SafeConfigParser (self):
         parser = ControllerConfigLoader()
 

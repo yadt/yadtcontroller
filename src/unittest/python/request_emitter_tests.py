@@ -15,12 +15,18 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+from yadtbroadcastclient import WampBroadcaster
 from mockito import when, verify, unstub, any as any_value, mock
 import yadt_controller.configuration
 from yadt_controller.request_emitter import RequestEmitter
 
 
 class RequestEmitterTests(unittest.TestCase):
+
+    def setUp(self):
+        self.wampbroadcaster = mock(WampBroadcaster)
+        self.wampbroadcaster.connect = lambda: None
+        when(yadt_controller.request_emitter).WampBroadcaster(any_value(), any_value()).thenReturn(self.wampbroadcaster)
 
     def tearDown(self):
         unstub()
@@ -41,13 +47,17 @@ class RequestEmitterTests(unittest.TestCase):
         self.assertRaises(ValueError, RequestEmitter, 'host', 65536)
 
     def test_should_create_request_emitter_with_configuration(self):
-        when(yadt_controller.request_emitter).WampBroadcaster(any_value(), any_value(), any_value()).thenReturn(None)
-        request_emitter = RequestEmitter('hostname', 12345)
+        when(yadt_controller.request_emitter.reactor).callWhenRunning(any_value()).thenReturn(None)
 
+        request_emitter = RequestEmitter('hostname', 12345)
         request_emitter.initialize()
 
         verify(yadt_controller.request_emitter).WampBroadcaster('hostname', 12345)
 
+    def test_should_add_connect_callback_to_reactor(self):
+        when(yadt_controller.request_emitter.reactor).callWhenRunning(any_value()).thenReturn(None)
 
+        request_emitter = RequestEmitter('hostname', 12345)
+        request_emitter.initialize()
 
-
+        verify(yadt_controller.request_emitter.reactor).callWhenRunning(self.wampbroadcaster.connect)
