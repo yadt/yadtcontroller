@@ -56,4 +56,3 @@ def _determine_configuration():
     if parsed_options.get('--broadcaster-port') is not None:
         config[BROADCASTER_PORT_KEY] = parsed_options['--broadcaster-port']
     return config
-
