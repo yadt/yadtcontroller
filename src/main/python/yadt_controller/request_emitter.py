@@ -17,7 +17,9 @@
 from yadtbroadcastclient import WampBroadcaster
 from twisted.internet import reactor
 
+
 class RequestEmitter(object):
+
     def _validate_port(self, port):
         if type(port) != int:
             error_message = 'port must be an integer, got {0} instead'.format(type(port))
