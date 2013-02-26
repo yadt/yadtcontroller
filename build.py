@@ -53,7 +53,6 @@ def set_properties(project):
     project.get_property('copy_resources_glob').append('setup.cfg')
 
 
-
 @init(environments="teamcity")
 def set_properties_for_teamcity(project):
     import os

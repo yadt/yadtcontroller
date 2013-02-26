@@ -16,7 +16,7 @@
 
 import unittest
 from mockito import when, verify, unstub, any as any_value, mock
-
+import yadt_controller.configuration
 from yadt_controller.request_emitter import RequestEmitter
 
 
@@ -39,3 +39,15 @@ class RequestEmitterTests(unittest.TestCase):
 
     def test_should_raise_exception_if_port_is_greater_than_65535(self):
         self.assertRaises(ValueError, RequestEmitter, 'host', 65536)
+
+    def test_should_create_request_emitter_with_configuration(self):
+        when(yadt_controller.request_emitter).WampBroadcaster(any_value(), any_value(), any_value()).thenReturn(None)
+        request_emitter = RequestEmitter('hostname', 12345)
+
+        request_emitter.initialize()
+
+        verify(yadt_controller.request_emitter).WampBroadcaster('hostname', 12345)
+
+
+
+

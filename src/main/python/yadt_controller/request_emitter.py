@@ -14,6 +14,8 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from yadtbroadcastclient import WampBroadcaster
+
 
 class RequestEmitter(object):
     def _validate_port(self, port):
@@ -33,3 +35,6 @@ class RequestEmitter(object):
         self._validate_port(port)
         self.host = host
         self.port = port
+
+    def initialize(self):
+        WampBroadcaster(self.host, self.port)
