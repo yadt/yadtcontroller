@@ -34,6 +34,9 @@ DEFAULT_BROADCASTER_PORT = 8081
 
 SECTION_BROADCASTER = 'broadcaster'
 
+BROADCASTER_HOST_KEY = 'broadcaster-host'
+BROADCASTER_PORT_KEY = 'broadcaster-port'
+
 
 class ControllerConfigLoader (object):
     """
@@ -78,7 +81,7 @@ def load(filename):
     config_loader = ControllerConfigLoader()
     config_loader.read_configuration_file(filename)
 
-    configuration = {'broadcaster_host': config_loader.get_broadcaster_host(),
-                     'broadcaster_port': config_loader.get_broadcaster_port()}
+    configuration = {BROADCASTER_HOST_KEY: config_loader.get_broadcaster_host(),
+                     BROADCASTER_PORT_KEY: config_loader.get_broadcaster_port()}
 
     return configuration

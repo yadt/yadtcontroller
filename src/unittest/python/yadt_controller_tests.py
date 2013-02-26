@@ -15,7 +15,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from mockito import when, verify, unstub, any as any_value, mock
+from mockito import when, verify, unstub, any as any_value
 
 import yadt_controller
 
@@ -24,8 +24,8 @@ class YadtControllerTests(unittest.TestCase):
 
     def setUp(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({})
-        when(yadt_controller.configuration).load(any_value()).thenReturn({'broadcaster_host': 'localhost',
-                                                                          'broadcaster_port': 12345})
+        when(yadt_controller).load(any_value()).thenReturn({'broadcaster-host': 'localhost',
+                                                                          'broadcaster-port': 12345})
         when(yadt_controller).RequestEmitter(any_value(), any_value()).thenReturn(None)
 
     def tearDown(self):
@@ -36,22 +36,39 @@ class YadtControllerTests(unittest.TestCase):
 
         verify(yadt_controller).docopt(yadt_controller.__doc__, version='${version}')
 
-    def test_should_initialize_request_emitter_with_configuration(self):
+    def test_should_initialize_request_emitter_with_default_configuration(self):
         yadt_controller.run()
 
         verify(yadt_controller).RequestEmitter('localhost', 12345)
 
-    def test_should_load_configuration_file_if_option_is_given(self):
-        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/path/to/config'})
+    def test_should_initialize_request_emitter_with_provided_host(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--broadcaster-host': 'host'})
 
         yadt_controller.run()
 
-        verify(yadt_controller.configuration).load('/path/to/config')
+        verify(yadt_controller).RequestEmitter('host', 12345)
+
+    def test_should_initialize_request_emitter_with_provided_port(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--broadcaster-port': 54321})
+
+        yadt_controller.run()
+
+        verify(yadt_controller).RequestEmitter('localhost', 54321)
+
+
+
+    def test_should_load_configuration_file_if_option_is_given(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/path/to/config',
+                                                                                   '--broadcaster-host': None})
+
+        yadt_controller.run()
+
+        verify(yadt_controller).load('/path/to/config')
 
 
     def test_should_load_default_configuration_file_if_option_is_not_given(self):
-        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': None})
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--broadcaster-host': None})
 
         yadt_controller.run()
 
-        verify(yadt_controller.configuration).load('/etc/yadtshell/controller.cfg')
+        verify(yadt_controller).load('/etc/yadtshell/controller.cfg')

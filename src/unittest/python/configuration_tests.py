@@ -95,10 +95,10 @@ class LoadTest (unittest.TestCase):
         actual_configuration = load('abc')
 
         self.assertEqual(call(), mock_loader.get_broadcaster_host.call_args)
-        self.assertEqual('broadcaster host', actual_configuration['broadcaster_host'])
+        self.assertEqual('broadcaster host', actual_configuration['broadcaster-host'])
 
         self.assertEqual(call(), mock_loader.get_broadcaster_port.call_args)
-        self.assertEqual(12345, actual_configuration['broadcaster_port'])
+        self.assertEqual(12345, actual_configuration['broadcaster-port'])
 
 
     @patch('yadt_controller.configuration.ControllerConfigLoader')
@@ -111,7 +111,7 @@ class LoadTest (unittest.TestCase):
         actual_configuration = load('abc')
 
         self.assertEqual(call(), mock_loader.get_broadcaster_host.call_args)
-        self.assertEqual('broadcaster host name', actual_configuration['broadcaster_host'])
+        self.assertEqual('broadcaster host name', actual_configuration['broadcaster-host'])
 
         self.assertEqual(call(), mock_loader.get_broadcaster_port.call_args)
-        self.assertEqual(12345, actual_configuration['broadcaster_port'])
+        self.assertEqual(12345, actual_configuration['broadcaster-port'])

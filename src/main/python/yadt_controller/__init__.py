@@ -20,13 +20,13 @@ yadtcontroller
 Usage:
 yadtcontroller (-h | --help)
 yadtcontroller --version
-yadtcontroller [--broadcaster_host=<broadcaster_host>] [--broadcaster_port=<broadcaster_port>] [--config-file=<config_file]
+yadtcontroller [--broadcaster-host=<host>] [--broadcaster-port=<port>] [--config-file=<config_file]
 
 Options:
 -h --help     Show this screen.
 --version     Show version.
---broadcaster_host=<broadcaster_host>
---broadcaster_port=<broadcaster_port>
+--broadcaster-host=<host>
+--broadcaster-port=<port>
 --config-file=<config_file>
 
 """
@@ -35,7 +35,7 @@ __version__ = '${version}'
 
 from docopt import docopt
 
-import configuration
+from configuration import BROADCASTER_HOST_KEY, BROADCASTER_PORT_KEY, load
 from yadt_controller.request_emitter import RequestEmitter
 
 
@@ -43,8 +43,12 @@ def run():
     parsed_options = docopt(__doc__, version=__version__)
 
     configuration_file_name = '/etc/yadtshell/controller.cfg'
-    if '--config-file' in parsed_options and parsed_options['--config-file'] is not None:
+    if parsed_options.get('--config-file') is not None:
         configuration_file_name = parsed_options['--config-file']
-    config = configuration.load(configuration_file_name)
+    config = load(configuration_file_name)
 
-    RequestEmitter(config['broadcaster_host'], config['broadcaster_port'])
+    if parsed_options.get('--broadcaster-host') is not None:
+        config[BROADCASTER_HOST_KEY] = parsed_options['--broadcaster-host']
+    if parsed_options.get('--broadcaster-port') is not None:
+        config[BROADCASTER_PORT_KEY] = parsed_options['--broadcaster-port']
+    RequestEmitter(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY])
