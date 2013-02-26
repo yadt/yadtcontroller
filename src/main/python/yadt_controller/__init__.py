@@ -42,7 +42,8 @@ from yadt_controller.request_emitter import RequestEmitter
 def run():
     config = _determine_configuration()
 
-    RequestEmitter(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY])
+    request_emitter = RequestEmitter(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY])
+    request_emitter.initialize()
 
 
 def _determine_configuration():

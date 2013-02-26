@@ -15,9 +15,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from mockito import when, verify, unstub, any as any_value
+from mockito import when, verify, unstub, any as any_value, mock
 
 import yadt_controller
+from yadt_controller.request_emitter import RequestEmitter
 
 
 class YadtControllerTests(unittest.TestCase):
@@ -26,7 +27,8 @@ class YadtControllerTests(unittest.TestCase):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({})
         when(yadt_controller).load(any_value()).thenReturn({'broadcaster-host': 'localhost',
                                                                           'broadcaster-port': 12345})
-        when(yadt_controller).RequestEmitter(any_value(), any_value()).thenReturn(None)
+        self.request_emitter_mock = mock(RequestEmitter)
+        when(yadt_controller).RequestEmitter(any_value(), any_value()).thenReturn(self.request_emitter_mock)
 
     def tearDown(self):
         unstub()
@@ -72,3 +74,8 @@ class YadtControllerTests(unittest.TestCase):
         yadt_controller.run()
 
         verify(yadt_controller).load('/etc/yadtshell/controller.cfg')
+
+    def test_should_initialize_request_emitter_upon_calling_run(self):
+        yadt_controller.run()
+
+        verify(self.request_emitter_mock).initialize()
