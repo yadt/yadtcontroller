@@ -42,11 +42,11 @@ default_task = ['analyze', 'publish']
 def set_properties(project):
     project.build_depends_on('mockito')
     project.build_depends_on('flake8')
+    project.build_depends_on('mock')
 
     project.depends_on('docopt')
     project.depends_on('yadtcommons')
     project.depends_on('yadtbroadcast-client')
-    project.depends_on('mock')
 
     project.get_property('filter_resources_glob').append('**/yadtcontroller/__init__.py')
     project.set_property('copy_resources_target', '$dir_dist')
