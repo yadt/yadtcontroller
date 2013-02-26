@@ -41,3 +41,5 @@ class RequestEmitter(object):
     def initialize(self):
         wamp_broadcaster = WampBroadcaster(self.host, self.port)
         reactor.callWhenRunning(wamp_broadcaster.connect)
+        reactor.callLater(1, reactor.stop)
+        reactor.run()

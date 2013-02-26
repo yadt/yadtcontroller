@@ -48,6 +48,7 @@ class RequestEmitterTests(unittest.TestCase):
 
     def test_should_create_request_emitter_with_configuration(self):
         when(yadt_controller.request_emitter.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.request_emitter.reactor).run().thenReturn(None)
 
         request_emitter = RequestEmitter('hostname', 12345)
         request_emitter.initialize()
@@ -56,8 +57,18 @@ class RequestEmitterTests(unittest.TestCase):
 
     def test_should_add_connect_callback_to_reactor(self):
         when(yadt_controller.request_emitter.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.request_emitter.reactor).run().thenReturn(None)
 
         request_emitter = RequestEmitter('hostname', 12345)
         request_emitter.initialize()
 
         verify(yadt_controller.request_emitter.reactor).callWhenRunning(self.wampbroadcaster.connect)
+
+    def test_should_start_reactor(self):
+        when(yadt_controller.request_emitter.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.request_emitter.reactor).run().thenReturn(None)
+
+        request_emitter = RequestEmitter('hostname', 12345)
+        request_emitter.initialize()
+
+        verify(yadt_controller.request_emitter.reactor).run()

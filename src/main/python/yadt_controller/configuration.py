@@ -24,13 +24,14 @@
         port = 8081
 """
 
-__author__ = 'Marcel Wolf, Michael Gruber'
+__author__ = 'Marcel Wolf, Maximilien Riehl, Michael Gruber'
 
-from yadtcommons.configuration import YadtConfigParser
+import sys
+from yadtcommons.configuration import YadtConfigParser, ConfigurationException
 
 
 DEFAULT_BROADCASTER_HOST = 'localhost'
-DEFAULT_BROADCASTER_PORT = 8081
+DEFAULT_BROADCASTER_PORT = '8081'
 
 SECTION_BROADCASTER = 'broadcaster'
 
@@ -79,7 +80,13 @@ def load(filename):
         @return: Configuration dictionary containing the data from the file.
     """
     config_loader = ControllerConfigLoader()
-    config_loader.read_configuration_file(filename)
+
+    try:
+
+        config_loader.read_configuration_file(filename)
+    except ConfigurationException as exception:
+        error_message = 'Error: {0}\nUsing defaults.\n'.format(str(exception))
+        sys.stderr.write(error_message)
 
     configuration = {BROADCASTER_HOST_KEY: config_loader.get_broadcaster_host(),
                      BROADCASTER_PORT_KEY: config_loader.get_broadcaster_port()}

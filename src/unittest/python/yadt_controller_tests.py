@@ -15,7 +15,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from mockito import when, verify, unstub, any as any_value, mock
+from mockito import when, verify, unstub, any as any_value, mock, never
 
 import yadt_controller
 from yadt_controller.request_emitter import RequestEmitter
@@ -74,6 +74,7 @@ class YadtControllerTests(unittest.TestCase):
         yadt_controller.run()
 
         verify(yadt_controller).load('/etc/yadtshell/controller.cfg')
+
 
     def test_should_initialize_request_emitter_upon_calling_run(self):
         yadt_controller.run()

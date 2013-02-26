@@ -26,7 +26,7 @@ from yadt_controller.configuration import (DEFAULT_BROADCASTER_HOST,
                                            SECTION_BROADCASTER,
                                            ControllerConfigLoader,
                                            load)
-from yadtcommons.configuration import YadtConfigParser
+from yadtcommons.configuration import YadtConfigParser, ConfigurationException
 
 
 class ControllerConfigLoaderTests (unittest.TestCase):
@@ -85,6 +85,13 @@ class LoadTest (unittest.TestCase):
 
         self.assertEqual(call('abc'), mock_loader.read_configuration_file.call_args)
 
+    @patch('yadt_controller.configuration.ControllerConfigLoader')
+    def test_should_ignore_configuration_exception(self, mock_loader_class):
+        mock_loader = Mock(ControllerConfigLoader)
+        mock_loader.read_configuration_file.side_effect = ConfigurationException('bla')
+        mock_loader_class.return_value = mock_loader
+
+        load('/foo/bar')
 
     @patch('yadt_controller.configuration.ControllerConfigLoader')
     def test_should_get_broadcaster_properties_from_parser (self, mock_loader_class):
