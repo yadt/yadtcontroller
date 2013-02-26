@@ -22,12 +22,36 @@ import yadt_controller
 
 class YadtControllerTests(unittest.TestCase):
 
+    def setUp(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({})
+        when(yadt_controller.configuration).load(any_value()).thenReturn({'broadcaster_host': 'localhost',
+                                                                          'broadcaster_port': 12345})
+        when(yadt_controller).RequestEmitter(any_value(), any_value()).thenReturn(None)
+
     def tearDown(self):
         unstub()
 
     def test_should_parse_command_line_using_docopt_with_program_version_when_run(self):
-        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({})
-
         yadt_controller.run()
 
         verify(yadt_controller).docopt(yadt_controller.__doc__, version='${version}')
+
+    def test_should_initialize_request_emitter_with_configuration(self):
+        yadt_controller.run()
+
+        verify(yadt_controller).RequestEmitter('localhost', 12345)
+
+    def test_should_load_configuration_file_if_option_is_given(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/path/to/config'})
+
+        yadt_controller.run()
+
+        verify(yadt_controller.configuration).load('/path/to/config')
+
+
+    def test_should_load_default_configuration_file_if_option_is_not_given(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': None})
+
+        yadt_controller.run()
+
+        verify(yadt_controller.configuration).load('/etc/yadtshell/controller.cfg')

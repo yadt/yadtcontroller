@@ -20,10 +20,14 @@ yadtcontroller
 Usage:
 yadtcontroller (-h | --help)
 yadtcontroller --version
+yadtcontroller [--broadcaster_host=<broadcaster_host>] [--broadcaster_port=<broadcaster_port>] [--config-file=<config_file]
 
 Options:
 -h --help     Show this screen.
 --version     Show version.
+--broadcaster_host=<broadcaster_host>
+--broadcaster_port=<broadcaster_port>
+--config-file=<config_file>
 
 """
 
@@ -31,6 +35,16 @@ __version__ = '${version}'
 
 from docopt import docopt
 
+import configuration
+from yadt_controller.request_emitter import RequestEmitter
+
 
 def run():
-    docopt(__doc__, version=__version__)
+    parsed_options = docopt(__doc__, version=__version__)
+
+    configuration_file_name = '/etc/yadtshell/controller.cfg'
+    if '--config-file' in parsed_options and parsed_options['--config-file'] is not None:
+        configuration_file_name = parsed_options['--config-file']
+    config = configuration.load(configuration_file_name)
+
+    RequestEmitter(config['broadcaster_host'], config['broadcaster_port'])
