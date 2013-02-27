@@ -37,6 +37,7 @@ SECTION_BROADCASTER = 'broadcaster'
 
 BROADCASTER_HOST_KEY = 'broadcaster-host'
 BROADCASTER_PORT_KEY = 'broadcaster-port'
+TARGET_KEY = 'target'
 
 
 class ControllerConfigLoader (object):
