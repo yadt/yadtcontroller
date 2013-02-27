@@ -31,12 +31,12 @@ class RequestEmitterTests(unittest.TestCase):
     def tearDown(self):
         unstub()
 
-    def test_should_instantiate_request_emitter_with_host_and_port(self):
-        request_emitter = EventHandler('host', 8081, 'target')
+    def test_should_instantiate_event_handler_with_host_and_port(self):
+        event_handler = EventHandler('host', 8081, 'target')
 
-        self.assertEqual(request_emitter.host, 'host')
-        self.assertEqual(request_emitter.port, 8081)
-        self.assertEqual(request_emitter.target, 'target')
+        self.assertEqual(event_handler.host, 'host')
+        self.assertEqual(event_handler.port, 8081)
+        self.assertEqual(event_handler.target, 'target')
 
     def test_should_raise_exception_when_port_is_not_an_integer(self):
         self.assertRaises(ValueError, EventHandler, 'host', 'notaninteger', 'target')
@@ -47,12 +47,12 @@ class RequestEmitterTests(unittest.TestCase):
     def test_should_raise_exception_if_port_is_greater_than_65535(self):
         self.assertRaises(ValueError, EventHandler, 'host', 65536, 'target')
 
-    def test_should_create_request_emitter_with_configuration(self):
+    def test_should_create_event_handler_with_configuration(self):
         when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
         when(yadt_controller.event_handler.reactor).run().thenReturn(None)
 
-        request_emitter = EventHandler('hostname', 12345, 'target')
-        request_emitter.initialize()
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.initialize()
 
         verify(yadt_controller.event_handler).WampBroadcaster('hostname', 12345, 'target')
 
@@ -60,8 +60,8 @@ class RequestEmitterTests(unittest.TestCase):
         when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
         when(yadt_controller.event_handler.reactor).run().thenReturn(None)
 
-        request_emitter = EventHandler('hostname', 12345, 'target')
-        request_emitter.initialize()
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.initialize()
 
         verify(yadt_controller.event_handler.reactor).callWhenRunning(self.wampbroadcaster.connect)
 
@@ -69,7 +69,7 @@ class RequestEmitterTests(unittest.TestCase):
         when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
         when(yadt_controller.event_handler.reactor).run().thenReturn(None)
 
-        request_emitter = EventHandler('hostname', 12345, 'target')
-        request_emitter.initialize()
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.initialize()
 
         verify(yadt_controller.event_handler.reactor).run()
