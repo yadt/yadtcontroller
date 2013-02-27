@@ -86,7 +86,7 @@ def load(filename):
 
         config_loader.read_configuration_file(filename)
     except ConfigurationException as exception:
-        error_message = 'Warning: {0}\nUsing defaults.\n'.format(str(exception))
+        error_message = 'Warning: {0}\n'.format(str(exception))
         sys.stderr.write(error_message)
 
     configuration = {BROADCASTER_HOST_KEY: config_loader.get_broadcaster_host(),
