@@ -18,7 +18,7 @@ import unittest
 from yadtbroadcastclient import WampBroadcaster
 from mockito import when, verify, unstub, any as any_value, mock
 import yadt_controller.configuration
-from yadt_controller.request_emitter import RequestEmitter
+from yadt_controller.event_handler import EventHandler
 
 
 class RequestEmitterTests(unittest.TestCase):
@@ -26,50 +26,50 @@ class RequestEmitterTests(unittest.TestCase):
     def setUp(self):
         self.wampbroadcaster = mock(WampBroadcaster)
         self.wampbroadcaster.connect = lambda: None
-        when(yadt_controller.request_emitter).WampBroadcaster(any_value(), any_value(), any_value()).thenReturn(self.wampbroadcaster)
+        when(yadt_controller.event_handler).WampBroadcaster(any_value(), any_value(), any_value()).thenReturn(self.wampbroadcaster)
 
     def tearDown(self):
         unstub()
 
     def test_should_instantiate_request_emitter_with_host_and_port(self):
-        request_emitter = RequestEmitter('host', 8081, 'target')
+        request_emitter = EventHandler('host', 8081, 'target')
 
         self.assertEqual(request_emitter.host, 'host')
         self.assertEqual(request_emitter.port, 8081)
         self.assertEqual(request_emitter.target, 'target')
 
     def test_should_raise_exception_when_port_is_not_an_integer(self):
-        self.assertRaises(ValueError, RequestEmitter, 'host', 'notaninteger', 'target')
+        self.assertRaises(ValueError, EventHandler, 'host', 'notaninteger', 'target')
 
     def test_should_raise_exception_when_port_is_negative(self):
-        self.assertRaises(ValueError, RequestEmitter, 'host', -80, 'target')
+        self.assertRaises(ValueError, EventHandler, 'host', -80, 'target')
 
     def test_should_raise_exception_if_port_is_greater_than_65535(self):
-        self.assertRaises(ValueError, RequestEmitter, 'host', 65536, 'target')
+        self.assertRaises(ValueError, EventHandler, 'host', 65536, 'target')
 
     def test_should_create_request_emitter_with_configuration(self):
-        when(yadt_controller.request_emitter.reactor).callWhenRunning(any_value()).thenReturn(None)
-        when(yadt_controller.request_emitter.reactor).run().thenReturn(None)
+        when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).run().thenReturn(None)
 
-        request_emitter = RequestEmitter('hostname', 12345, 'target')
+        request_emitter = EventHandler('hostname', 12345, 'target')
         request_emitter.initialize()
 
-        verify(yadt_controller.request_emitter).WampBroadcaster('hostname', 12345, 'target')
+        verify(yadt_controller.event_handler).WampBroadcaster('hostname', 12345, 'target')
 
     def test_should_add_connect_callback_to_reactor(self):
-        when(yadt_controller.request_emitter.reactor).callWhenRunning(any_value()).thenReturn(None)
-        when(yadt_controller.request_emitter.reactor).run().thenReturn(None)
+        when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).run().thenReturn(None)
 
-        request_emitter = RequestEmitter('hostname', 12345, 'target')
+        request_emitter = EventHandler('hostname', 12345, 'target')
         request_emitter.initialize()
 
-        verify(yadt_controller.request_emitter.reactor).callWhenRunning(self.wampbroadcaster.connect)
+        verify(yadt_controller.event_handler.reactor).callWhenRunning(self.wampbroadcaster.connect)
 
     def test_should_start_reactor(self):
-        when(yadt_controller.request_emitter.reactor).callWhenRunning(any_value()).thenReturn(None)
-        when(yadt_controller.request_emitter.reactor).run().thenReturn(None)
+        when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).run().thenReturn(None)
 
-        request_emitter = RequestEmitter('hostname', 12345, 'target')
+        request_emitter = EventHandler('hostname', 12345, 'target')
         request_emitter.initialize()
 
-        verify(yadt_controller.request_emitter.reactor).run()
+        verify(yadt_controller.event_handler.reactor).run()

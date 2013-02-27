@@ -36,13 +36,13 @@ __version__ = '${version}'
 from docopt import docopt
 
 from configuration import BROADCASTER_HOST_KEY, BROADCASTER_PORT_KEY, TARGET_KEY, load
-from yadt_controller.request_emitter import RequestEmitter
+from yadt_controller.event_handler import EventHandler
 
 
 def run():
     config = _determine_configuration()
 
-    request_emitter = RequestEmitter(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
+    request_emitter = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
     request_emitter.initialize()
 
 

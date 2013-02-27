@@ -18,7 +18,7 @@ from yadtbroadcastclient import WampBroadcaster
 from twisted.internet import reactor
 
 
-class RequestEmitter(object):
+class EventHandler(object):
 
     def _validate_port(self, port):
         if port < 0:
