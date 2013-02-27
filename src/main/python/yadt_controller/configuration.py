@@ -84,7 +84,6 @@ def load(filename):
     config_loader = ControllerConfigLoader()
 
     try:
-
         config_loader.read_configuration_file(filename)
     except ConfigurationException as exception:
         logger.warn(str(exception))
