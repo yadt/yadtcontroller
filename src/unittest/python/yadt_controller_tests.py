@@ -24,7 +24,7 @@ from yadt_controller.event_handler import EventHandler
 class YadtControllerTests(unittest.TestCase):
 
     def setUp(self):
-        when(yadt_controller).basicConfig().thenReturn(None)
+        when(yadt_controller).basicConfig(format=any_value()).thenReturn(None)
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'<target>': 'target'})
         when(yadt_controller).load(any_value()).thenReturn({'broadcaster-host': 'localhost',
                                                                                 'broadcaster-port': 12345})
@@ -37,7 +37,7 @@ class YadtControllerTests(unittest.TestCase):
     def test_should_initialize_logging(self):
         yadt_controller.run()
 
-        verify(yadt_controller).basicConfig()
+        verify(yadt_controller).basicConfig(format='[%(levelname)s] %(message)s')
 
     def test_should_parse_command_line_using_docopt_with_program_version_when_run(self):
         yadt_controller.run()
