@@ -18,9 +18,9 @@
 yadtcontroller
 
 Usage:
+yadtcontroller [--broadcaster-host=<host>] [--broadcaster-port=<port>] [--config-file=<config_file>] <target>
 yadtcontroller (-h | --help)
 yadtcontroller --version
-yadtcontroller [--broadcaster-host=<host>] [--broadcaster-port=<port>] [--config-file=<config_file]
 
 Options:
 -h --help     Show this screen.
@@ -49,11 +49,14 @@ def run():
 def _determine_configuration():
     parsed_options = docopt(__doc__, version=__version__)
     configuration_file_name = '/etc/yadtshell/controller.cfg'
+
     if parsed_options.get('--config-file') is not None:
         configuration_file_name = parsed_options['--config-file']
     config = load(configuration_file_name)
+
     if parsed_options.get('--broadcaster-host') is not None:
         config[BROADCASTER_HOST_KEY] = parsed_options['--broadcaster-host']
+
     if parsed_options.get('--broadcaster-port') is not None:
         config[BROADCASTER_PORT_KEY] = parsed_options['--broadcaster-port']
     return config

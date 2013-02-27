@@ -29,14 +29,15 @@ class RequestEmitter(object):
             error_message = 'port {0} out of range, use port between 0 and 65535'.format(port)
             raise ValueError(error_message)
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, target):
         port = int(port)
         self._validate_port(port)
         self.host = host
         self.port = port
+        self.target = target
 
     def initialize(self):
-        wamp_broadcaster = WampBroadcaster(self.host, self.port)
+        wamp_broadcaster = WampBroadcaster(self.host, self.port, self.target)
         reactor.callWhenRunning(wamp_broadcaster.connect)
         reactor.callLater(1, reactor.stop)
         reactor.run()

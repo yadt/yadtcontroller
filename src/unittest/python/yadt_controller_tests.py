@@ -26,7 +26,7 @@ class YadtControllerTests(unittest.TestCase):
     def setUp(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({})
         when(yadt_controller).load(any_value()).thenReturn({'broadcaster-host': 'localhost',
-                                                                          'broadcaster-port': 12345})
+                                                                                'broadcaster-port': 12345})
         self.request_emitter_mock = mock(RequestEmitter)
         when(yadt_controller).RequestEmitter(any_value(), any_value()).thenReturn(self.request_emitter_mock)
 
