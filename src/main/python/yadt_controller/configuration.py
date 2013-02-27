@@ -26,9 +26,8 @@
 
 __author__ = 'Marcel Wolf, Maximilien Riehl, Michael Gruber'
 
-import sys
 from yadtcommons.configuration import YadtConfigParser, ConfigurationException
-
+from logging import getLogger
 
 DEFAULT_BROADCASTER_HOST = 'localhost'
 DEFAULT_BROADCASTER_PORT = '8081'
@@ -38,6 +37,8 @@ SECTION_BROADCASTER = 'broadcaster'
 BROADCASTER_HOST_KEY = 'broadcaster-host'
 BROADCASTER_PORT_KEY = 'broadcaster-port'
 TARGET_KEY = 'target'
+
+logger = getLogger('configuration')
 
 
 class ControllerConfigLoader (object):
@@ -86,8 +87,7 @@ def load(filename):
 
         config_loader.read_configuration_file(filename)
     except ConfigurationException as exception:
-        error_message = 'Warning: {0}\n'.format(str(exception))
-        sys.stderr.write(error_message)
+        logger.warn(str(exception))
 
     configuration = {BROADCASTER_HOST_KEY: config_loader.get_broadcaster_host(),
                      BROADCASTER_PORT_KEY: config_loader.get_broadcaster_port()}

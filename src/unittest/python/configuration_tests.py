@@ -31,13 +31,13 @@ from yadtcommons.configuration import YadtConfigParser, ConfigurationException
 
 class ControllerConfigLoaderTests (unittest.TestCase):
 
-    def test_should_create_instance_of_SafeConfigParser (self):
+    def test_should_create_instance_of_SafeConfigParser(self):
         parser = ControllerConfigLoader()
 
         name_of_type = parser._parser.__class__.__name__
         self.assertEqual('YadtConfigParser', name_of_type)
 
-    def test_should_return_broadcaster_host_option (self):
+    def test_should_return_broadcaster_host_option(self):
         mock_loader = Mock(ControllerConfigLoader)
         mock_parser = Mock(YadtConfigParser)
         mock_parser.get_option.return_value = 'broadcaster.host'
@@ -48,8 +48,7 @@ class ControllerConfigLoaderTests (unittest.TestCase):
         self.assertEqual('broadcaster.host', actual_broadcaster_host)
         self.assertEqual(call(SECTION_BROADCASTER, 'host', DEFAULT_BROADCASTER_HOST), mock_parser.get_option.call_args)
 
-
-    def test_should_return_broadcaster_port_option (self):
+    def test_should_return_broadcaster_port_option(self):
         mock_loader = Mock(ControllerConfigLoader)
         mock_parser = Mock(YadtConfigParser)
         mock_parser.get_option_as_int.return_value = 8081
@@ -60,10 +59,7 @@ class ControllerConfigLoaderTests (unittest.TestCase):
         self.assertEqual(8081, actual_broadcaster_port)
         self.assertEqual(call(SECTION_BROADCASTER, 'port', DEFAULT_BROADCASTER_PORT), mock_parser.get_option_as_int.call_args)
 
-
-
-
-    def test_should_delegate_read_configuration_file (self):
+    def test_should_delegate_read_configuration_file(self):
         mock_loader = Mock(ControllerConfigLoader)
         mock_parser = Mock(YadtConfigParser)
         mock_parser.read_configuration_file.return_value = {'spam': 'eggs'}
@@ -77,7 +73,7 @@ class ControllerConfigLoaderTests (unittest.TestCase):
 
 class LoadTest (unittest.TestCase):
     @patch('yadt_controller.configuration.ControllerConfigLoader')
-    def test_should_load_configuration_from_file (self, mock_loader_class):
+    def test_should_load_configuration_from_file(self, mock_loader_class):
         mock_loader = Mock(ControllerConfigLoader)
         mock_loader_class.return_value = mock_loader
 
@@ -85,8 +81,9 @@ class LoadTest (unittest.TestCase):
 
         self.assertEqual(call('abc'), mock_loader.read_configuration_file.call_args)
 
+    @patch('yadt_controller.configuration.logger')
     @patch('yadt_controller.configuration.ControllerConfigLoader')
-    def test_should_ignore_configuration_exception(self, mock_loader_class):
+    def test_should_ignore_configuration_exception(self, mock_loader_class, mock_logger):
         mock_loader = Mock(ControllerConfigLoader)
         mock_loader.read_configuration_file.side_effect = ConfigurationException('bla')
         mock_loader_class.return_value = mock_loader

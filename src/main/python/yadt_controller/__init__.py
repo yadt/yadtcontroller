@@ -33,13 +33,16 @@ Options:
 
 __version__ = '${version}'
 
-from docopt import docopt
+DEFAULT_CONFIGURATION_FILE = '/etc/yadtshell/controller.cfg'
 
+from docopt import docopt
+from logging import basicConfig
 from configuration import BROADCASTER_HOST_KEY, BROADCASTER_PORT_KEY, TARGET_KEY, load
 from yadt_controller.event_handler import EventHandler
 
 
 def run():
+    basicConfig(format='[%(levelname)s] %(message)s')
     config = _determine_configuration()
 
     request_emitter = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
@@ -48,10 +51,11 @@ def run():
 
 def _determine_configuration():
     parsed_options = docopt(__doc__, version=__version__)
-    configuration_file_name = '/etc/yadtshell/controller.cfg'
+    configuration_file_name = DEFAULT_CONFIGURATION_FILE
 
     if parsed_options.get('--config-file') is not None:
         configuration_file_name = parsed_options['--config-file']
+
     config = load(configuration_file_name)
     config[TARGET_KEY] = parsed_options['<target>']
 
