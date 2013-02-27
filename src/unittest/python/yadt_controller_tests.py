@@ -65,8 +65,6 @@ class YadtControllerTests(unittest.TestCase):
 
         verify(yadt_controller).EventHandler('localhost', 54321, 'target')
 
-
-
     def test_should_load_configuration_file_if_option_is_given(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/path/to/config',
                                                                                    '--broadcaster-host': None,
@@ -76,7 +74,6 @@ class YadtControllerTests(unittest.TestCase):
 
         verify(yadt_controller).load('/path/to/config')
 
-
     def test_should_load_default_configuration_file_if_option_is_not_given(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--broadcaster-host': None,
                                                                                    '<target>': 'target'})
@@ -84,7 +81,6 @@ class YadtControllerTests(unittest.TestCase):
         yadt_controller.run()
 
         verify(yadt_controller).load('/etc/yadtshell/controller.cfg')
-
 
     def test_should_initialize_request_emitter_upon_calling_run(self):
         yadt_controller.run()
