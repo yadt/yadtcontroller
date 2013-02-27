@@ -21,10 +21,6 @@ from twisted.internet import reactor
 class RequestEmitter(object):
 
     def _validate_port(self, port):
-        if type(port) != int:
-            error_message = 'port must be an integer, got {0} instead'.format(type(port))
-            raise ValueError(error_message)
-
         if port < 0:
             error_message = 'port must be greater than 0, got {0}'.format(port)
             raise ValueError(error_message)
@@ -34,6 +30,7 @@ class RequestEmitter(object):
             raise ValueError(error_message)
 
     def __init__(self, host, port):
+        port = int(port)
         self._validate_port(port)
         self.host = host
         self.port = port
