@@ -53,7 +53,7 @@ def _determine_configuration():
     if parsed_options.get('--config-file') is not None:
         configuration_file_name = parsed_options['--config-file']
     config = load(configuration_file_name)
-    config[TARGET_KEY] = parsed_options['target']
+    config[TARGET_KEY] = parsed_options['<target>']
 
     if parsed_options.get('--broadcaster-host') is not None:
         config[BROADCASTER_HOST_KEY] = parsed_options['--broadcaster-host']
