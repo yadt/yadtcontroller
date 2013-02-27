@@ -16,6 +16,9 @@
 
 from yadtbroadcastclient import WampBroadcaster
 from twisted.internet import reactor
+import logging
+
+logger = logging.getLogger('event_handler')
 
 
 class EventHandler(object):
@@ -37,7 +40,11 @@ class EventHandler(object):
         self.target = target
 
     def initialize(self):
-        wamp_broadcaster = WampBroadcaster(self.host, self.port, self.target)
-        reactor.callWhenRunning(wamp_broadcaster.connect)
-        reactor.callLater(1, reactor.stop)
+        self.wamp_broadcaster = WampBroadcaster(self.host, self.port, self.target)
+        self.wamp_broadcaster.onEvent = self.on_info
+        reactor.callWhenRunning(self.wamp_broadcaster.connect)
         reactor.run()
+
+    def on_info(self, target, info_event):
+        logger.info(info_event)
+        reactor.stop()

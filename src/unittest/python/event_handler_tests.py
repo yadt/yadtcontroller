@@ -65,6 +65,26 @@ class RequestEmitterTests(unittest.TestCase):
 
         verify(yadt_controller.event_handler.reactor).callWhenRunning(self.wampbroadcaster.connect)
 
+    def test_should_set_onevent_callback_when_initializing_wamp_broadcaster(self):
+        when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).run().thenReturn(None)
+
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.initialize()
+
+        self.assertTrue(event_handler.wamp_broadcaster.onEvent == event_handler.on_info)
+
+    def test_oninfo_should_stop_reactor(self):
+        when(yadt_controller.event_handler.reactor).stop().thenReturn(None)
+        when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).run().thenReturn(None)
+
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.on_info('some-target', 'an-info-event')
+
+        verify(yadt_controller.event_handler.reactor).stop()
+
+
     def test_should_start_reactor(self):
         when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
         when(yadt_controller.event_handler.reactor).run().thenReturn(None)

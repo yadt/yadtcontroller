@@ -15,6 +15,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+import logging
 from mockito import when, verify, unstub, any as any_value, mock, never
 
 import yadt_controller
@@ -25,6 +26,8 @@ class YadtControllerTests(unittest.TestCase):
 
     def setUp(self):
         when(yadt_controller).basicConfig(format=any_value()).thenReturn(None)
+        self.mock_root_logger = mock()
+        when(yadt_controller).getLogger().thenReturn(self.mock_root_logger)
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'<target>': 'target'})
         when(yadt_controller).load(any_value()).thenReturn({'broadcaster-host': 'localhost',
                                                                                 'broadcaster-port': 12345})
@@ -38,6 +41,8 @@ class YadtControllerTests(unittest.TestCase):
         yadt_controller.run()
 
         verify(yadt_controller).basicConfig(format='[%(levelname)s] %(message)s')
+        verify(yadt_controller).getLogger()
+        verify(self.mock_root_logger).setLevel(yadt_controller.INFO)
 
     def test_should_parse_command_line_using_docopt_with_program_version_when_run(self):
         yadt_controller.run()
