@@ -28,7 +28,10 @@ class YadtControllerTests(unittest.TestCase):
         when(yadt_controller).basicConfig(format=any_value()).thenReturn(None)
         self.mock_root_logger = mock()
         when(yadt_controller).getLogger().thenReturn(self.mock_root_logger)
-        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'<target>': 'target'})
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'<target>': 'target',
+                                                                                   '--config-file': '/path/to/config',
+                                                                                   '--broadcaster-host': 'host',
+                                                                                   '--broadcaster-port': '54321'})
         when(yadt_controller).load(any_value()).thenReturn({'broadcaster-host': 'localhost',
                                                                                 'broadcaster-port': 12345})
         self.request_emitter_mock = mock(EventHandler)
@@ -49,43 +52,19 @@ class YadtControllerTests(unittest.TestCase):
 
         verify(yadt_controller).docopt(yadt_controller.__doc__, version='${version}')
 
-    def test_should_initialize_request_emitter_with_default_configuration(self):
+    def test_should_initialize_request_emitter_with_provided_host_and_port(self):
         yadt_controller.run()
 
-        verify(yadt_controller).EventHandler('localhost', 12345, 'target')
+        verify(yadt_controller).EventHandler('host', '54321', 'target')
 
-    def test_should_initialize_request_emitter_with_provided_host(self):
-        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--broadcaster-host': 'host',
-                                                                                   '<target>': 'target'})
-
-        yadt_controller.run()
-
-        verify(yadt_controller).EventHandler('host', 12345, 'target')
-
-    def test_should_initialize_request_emitter_with_provided_port(self):
-        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--broadcaster-port': 54321,
-                                                                                   '<target>': 'target'})
-
-        yadt_controller.run()
-
-        verify(yadt_controller).EventHandler('localhost', 54321, 'target')
-
-    def test_should_load_configuration_file_if_option_is_given(self):
-        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/path/to/config',
+    def test_should_load_configuration_file(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
                                                                                    '--broadcaster-host': None,
-                                                                                   '<target>': 'target'})
-
+                                                                                   '<target>': 'target',
+                                                                                   '--broadcaster-port': '1234'})
         yadt_controller.run()
 
-        verify(yadt_controller).load('/path/to/config')
-
-    def test_should_load_default_configuration_file_if_option_is_not_given(self):
-        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--broadcaster-host': None,
-                                                                                   '<target>': 'target'})
-
-        yadt_controller.run()
-
-        verify(yadt_controller).load('/etc/yadtshell/controller.cfg')
+        verify(yadt_controller).load('/configuration')
 
     def test_should_initialize_request_emitter_upon_calling_run(self):
         yadt_controller.run()

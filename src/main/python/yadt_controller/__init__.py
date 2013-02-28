@@ -18,16 +18,16 @@
 yadtcontroller
 
 Usage:
-yadtcontroller [--broadcaster-host=<host>] [--broadcaster-port=<port>] [--config-file=<config_file>] <target>
+yadtcontroller <target> [--broadcaster-host=<host>] [--broadcaster-port=<port>] [--config-file=<config_file>] [-v | --verbose]
 yadtcontroller (-h | --help)
 yadtcontroller --version
 
 Options:
 -h --help     Show this screen.
 --version     Show version.
---broadcaster-host=<host>
---broadcaster-port=<port>
---config-file=<config_file>
+--broadcaster-host=<host>   Override broadcaster host to use for publishing [default: localhost].
+--broadcaster-port=<port>   Override broadcaster port to use for publishing [default: 8081].
+--config-file=<config_file> Load configuration from this file               [default: /etc/yadtshell/controller.cfg].
 
 """
 
@@ -43,8 +43,9 @@ from yadt_controller.event_handler import EventHandler
 
 def run():
     basicConfig(format='[%(levelname)s] %(message)s')
-    getLogger().setLevel(INFO)
     config = _determine_configuration()
+
+    getLogger().setLevel(INFO)
 
     request_emitter = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
     request_emitter.initialize()
@@ -52,17 +53,13 @@ def run():
 
 def _determine_configuration():
     parsed_options = docopt(__doc__, version=__version__)
-    configuration_file_name = DEFAULT_CONFIGURATION_FILE
-
-    if parsed_options.get('--config-file') is not None:
-        configuration_file_name = parsed_options['--config-file']
+    configuration_file_name = parsed_options['--config-file']
 
     config = load(configuration_file_name)
     config[TARGET_KEY] = parsed_options['<target>']
 
-    if parsed_options.get('--broadcaster-host') is not None:
-        config[BROADCASTER_HOST_KEY] = parsed_options['--broadcaster-host']
+    config[BROADCASTER_HOST_KEY] = parsed_options['--broadcaster-host']
 
-    if parsed_options.get('--broadcaster-port') is not None:
-        config[BROADCASTER_PORT_KEY] = parsed_options['--broadcaster-port']
+    config[BROADCASTER_PORT_KEY] = parsed_options['--broadcaster-port']
+
     return config
