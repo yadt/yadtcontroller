@@ -76,13 +76,17 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    '--broadcaster-host': 'default-host',
                                                                                    '<target>': 'target',
                                                                                    '--broadcaster-port': '1234'})
-        when(yadt_controller).parse_defaults(yadt_controller.__doc__).thenReturn([Option('-b',
+        when(yadt_controller).parse_defaults(yadt_controller.__doc__).thenReturn([Option('-p',
+                                                                                         '--broadcaster-port',
+                                                                                         1,
+                                                                                         'default-port'),
+                                                                                  Option('-b',
                                                                                          '--broadcaster-host',
                                                                                          1,
                                                                                          'default-host')])
         yadt_controller.run()
 
-        verify(yadt_controller).EventHandler('localhost', 12345, 'target')
+        verify(yadt_controller).EventHandler('localhost', '1234', 'target')
 
     def test_determine_configuration_should_not_override_broadcaster_port_from_config_file_with_default(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
@@ -92,7 +96,26 @@ class YadtControllerTests(unittest.TestCase):
         when(yadt_controller).parse_defaults(yadt_controller.__doc__).thenReturn([Option('-p',
                                                                                          '--broadcaster-port',
                                                                                          1,
-                                                                                         'default-port')])
+                                                                                         'default-port'),
+                                                                                  Option('-b',
+                                                                                         '--broadcaster-host',
+                                                                                         1,
+                                                                                         'default-host')])
         yadt_controller.run()
 
-        verify(yadt_controller).EventHandler('localhost', 12345, 'target')
+        verify(yadt_controller).EventHandler('host', 12345, 'target')
+
+    def test_get_defaults_should_return_default_broadcaster_and_port(self):
+        when(yadt_controller).parse_defaults(yadt_controller.__doc__).thenReturn([Option('-p',
+                                                                                         '--broadcaster-port',
+                                                                                         1,
+                                                                                         'default-port'),
+                                                                                  Option('-b',
+                                                                                         '--broadcaster-host',
+                                                                                         1,
+                                                                                         'default-host')])
+
+        actual_defaults = yadt_controller._get_defaults()
+
+        self.assertEqual(actual_defaults, {'--broadcaster-host': 'default-host',
+                                           '--broadcaster-port': 'default-port'})

@@ -53,7 +53,6 @@ def run():
 
 def _determine_configuration():
     parsed_options = docopt(__doc__, version=__version__)
-    defaults = parse_defaults(__doc__)
 
     configuration_file_name = parsed_options['--config-file']
 
@@ -61,11 +60,18 @@ def _determine_configuration():
 
     config[TARGET_KEY] = parsed_options['<target>']
 
-    for default in defaults:
-        if default.name == '--broadcaster-host' and parsed_options['--broadcaster-host'] != default.value:
-            config[BROADCASTER_HOST_KEY] = parsed_options['--broadcaster-host']
+    defaults = _get_defaults()
+    if defaults['--broadcaster-host'] != parsed_options['--broadcaster-host']:
+        config[BROADCASTER_HOST_KEY] = parsed_options['--broadcaster-host']
 
-        if default.name == '--broadcaster-port' and parsed_options['--broadcaster-port'] != default.value:
-            config[BROADCASTER_PORT_KEY] = parsed_options['--broadcaster-port']
-
+    if defaults['--broadcaster-port'] != parsed_options['--broadcaster-port']:
+        config[BROADCASTER_PORT_KEY] = parsed_options['--broadcaster-port']
     return config
+
+
+def _get_defaults():
+    defaults = {}
+    for default in parse_defaults(__doc__):
+        if default.name in ['--broadcaster-host', '--broadcaster-port']:
+            defaults[default.name] = default.value
+    return defaults
