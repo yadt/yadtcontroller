@@ -15,8 +15,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import logging
-from mockito import when, verify, unstub, any as any_value, mock, never
+from mockito import when, verify, unstub, any as any_value, mock
+from docopt import Option
 
 import yadt_controller
 from yadt_controller.event_handler import EventHandler
@@ -70,3 +70,29 @@ class YadtControllerTests(unittest.TestCase):
         yadt_controller.run()
 
         verify(self.request_emitter_mock).initialize()
+
+    def test_determine_configuration_should_not_override_broadcaster_host_from_config_file_with_default(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
+                                                                                   '--broadcaster-host': 'default-host',
+                                                                                   '<target>': 'target',
+                                                                                   '--broadcaster-port': '1234'})
+        when(yadt_controller).parse_defaults(yadt_controller.__doc__).thenReturn([Option('-b',
+                                                                                         '--broadcaster-host',
+                                                                                         1,
+                                                                                         'default-host')])
+        yadt_controller.run()
+
+        verify(yadt_controller).EventHandler('localhost', 12345, 'target')
+
+    def test_determine_configuration_should_not_override_broadcaster_port_from_config_file_with_default(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
+                                                                                   '--broadcaster-host': 'host',
+                                                                                   '<target>': 'target',
+                                                                                   '--broadcaster-port': 'default-port'})
+        when(yadt_controller).parse_defaults(yadt_controller.__doc__).thenReturn([Option('-p',
+                                                                                         '--broadcaster-port',
+                                                                                         1,
+                                                                                         'default-port')])
+        yadt_controller.run()
+
+        verify(yadt_controller).EventHandler('localhost', 12345, 'target')
