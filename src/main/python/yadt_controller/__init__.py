@@ -25,8 +25,8 @@ yadtcontroller --version
 Options:
 -h --help     Show this screen.
 --version     Show version.
---broadcaster-host=<host>   Override broadcaster host to use for publishing [default: localhost].
---broadcaster-port=<port>   Override broadcaster port to use for publishing [default: 8081].
+-b <host> --broadcaster-host=<host>   Override broadcaster host to use for publishing [default: localhost].
+-p <port> --broadcaster-port=<port>   Override broadcaster port to use for publishing [default: 8081].
 --config-file=<config_file> Load configuration from this file               [default: /etc/yadtshell/controller.cfg].
 
 """
