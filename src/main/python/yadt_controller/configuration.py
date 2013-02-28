@@ -29,9 +29,6 @@ __author__ = 'Marcel Wolf, Maximilien Riehl, Michael Gruber'
 from yadtcommons.configuration import YadtConfigParser, ConfigurationException
 from logging import getLogger
 
-DEFAULT_BROADCASTER_HOST = 'localhost'
-DEFAULT_BROADCASTER_PORT = '8081'
-
 SECTION_BROADCASTER = 'broadcaster'
 
 BROADCASTER_HOST_KEY = 'broadcaster-host'
@@ -45,6 +42,8 @@ class ControllerConfigLoader (object):
     """
         uses a YadtConfigParser which offers convenience methods.
     """
+    DEFAULT_BROADCASTER_HOST = 'localhost'
+    DEFAULT_BROADCASTER_PORT = '8081'
 
     def __init__(self):
         """
@@ -57,14 +56,14 @@ class ControllerConfigLoader (object):
             @return: the broadcaster host from the configuration file,
                      otherwise DEFAULT_BROADCASTER_HOST.
         """
-        return self._parser.get_option(SECTION_BROADCASTER, 'host', DEFAULT_BROADCASTER_HOST)
+        return self._parser.get_option(SECTION_BROADCASTER, 'host', self.DEFAULT_BROADCASTER_HOST)
 
     def get_broadcaster_port(self):
         """
             @return: the broadcaster port from the configuration file as int,
                      otherwise DEFAULT_BROADCASTER_PORT.
         """
-        return self._parser.get_option_as_int(SECTION_BROADCASTER, 'port', DEFAULT_BROADCASTER_PORT)
+        return self._parser.get_option_as_int(SECTION_BROADCASTER, 'port', self.DEFAULT_BROADCASTER_PORT)
 
     def read_configuration_file(self, filename):
         """

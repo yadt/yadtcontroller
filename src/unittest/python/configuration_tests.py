@@ -21,9 +21,7 @@ import unittest
 
 from mock import Mock, call, patch
 
-from yadt_controller.configuration import (DEFAULT_BROADCASTER_HOST,
-                                           DEFAULT_BROADCASTER_PORT,
-                                           SECTION_BROADCASTER,
+from yadt_controller.configuration import (SECTION_BROADCASTER,
                                            ControllerConfigLoader,
                                            load)
 from yadtcommons.configuration import YadtConfigParser, ConfigurationException
@@ -46,7 +44,7 @@ class ControllerConfigLoaderTests (unittest.TestCase):
         actual_broadcaster_host = ControllerConfigLoader.get_broadcaster_host(mock_loader)
 
         self.assertEqual('broadcaster.host', actual_broadcaster_host)
-        self.assertEqual(call(SECTION_BROADCASTER, 'host', DEFAULT_BROADCASTER_HOST), mock_parser.get_option.call_args)
+        self.assertEqual(call(SECTION_BROADCASTER, 'host', mock_loader.DEFAULT_BROADCASTER_HOST), mock_parser.get_option.call_args)
 
     def test_should_return_broadcaster_port_option(self):
         mock_loader = Mock(ControllerConfigLoader)
@@ -57,7 +55,7 @@ class ControllerConfigLoaderTests (unittest.TestCase):
         actual_broadcaster_port = ControllerConfigLoader.get_broadcaster_port(mock_loader)
 
         self.assertEqual(8081, actual_broadcaster_port)
-        self.assertEqual(call(SECTION_BROADCASTER, 'port', DEFAULT_BROADCASTER_PORT), mock_parser.get_option_as_int.call_args)
+        self.assertEqual(call(SECTION_BROADCASTER, 'port', mock_loader.DEFAULT_BROADCASTER_PORT), mock_parser.get_option_as_int.call_args)
 
     def test_should_delegate_read_configuration_file(self):
         mock_loader = Mock(ControllerConfigLoader)
