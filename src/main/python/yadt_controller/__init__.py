@@ -18,7 +18,7 @@
 yadtcontroller
 
 Usage:
-yadtcontroller <target> [--broadcaster-host=<host>] [--broadcaster-port=<port>] [--config-file=<config_file>] [-v | --verbose]
+yadtcontroller <target> [--broadcaster-host=<host> --broadcaster-port=<port> --config-file=<config_file>]
 yadtcontroller (-h | --help)
 yadtcontroller --version
 
