@@ -53,14 +53,14 @@ def run():
 
 def _determine_configuration():
     parsed_options = docopt(__doc__, version=__version__)
+    defaults = _get_defaults()
 
     configuration_file_name = parsed_options['--config-file']
 
-    config = load(configuration_file_name)
+    config = load(configuration_file_name, defaults)
 
     config[TARGET_KEY] = parsed_options['<target>']
 
-    defaults = _get_defaults()
     if defaults['--broadcaster-host'] != parsed_options['--broadcaster-host']:
         config[BROADCASTER_HOST_KEY] = parsed_options['--broadcaster-host']
 

@@ -79,6 +79,14 @@ class LoadTest (unittest.TestCase):
 
         self.assertEqual(call('abc'), mock_loader.read_configuration_file.call_args)
 
+    @patch('yadt_controller.configuration.ControllerConfigLoader')
+    def test_should_load_configuration_from_file(self, mock_loader):
+        mock_defaults = Mock()
+
+        load('abc', mock_defaults)
+
+        self.assertEqual(call(mock_defaults), mock_loader.call_args)
+
     @patch('yadt_controller.configuration.logger')
     @patch('yadt_controller.configuration.ControllerConfigLoader')
     def test_should_ignore_configuration_exception(self, mock_loader_class, mock_logger):
@@ -89,7 +97,7 @@ class LoadTest (unittest.TestCase):
         load('/foo/bar')
 
     @patch('yadt_controller.configuration.ControllerConfigLoader')
-    def test_should_get_broadcaster_properties_from_parser (self, mock_loader_class):
+    def test_should_get_broadcaster_properties_from_parser(self, mock_loader_class):
         mock_loader = Mock(ControllerConfigLoader)
         mock_loader.get_broadcaster_host.return_value = 'broadcaster host'
         mock_loader.get_broadcaster_port.return_value = 12345

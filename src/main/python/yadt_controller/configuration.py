@@ -45,7 +45,7 @@ class ControllerConfigLoader (object):
     DEFAULT_BROADCASTER_HOST = 'localhost'
     DEFAULT_BROADCASTER_PORT = '8081'
 
-    def __init__(self):
+    def __init__(self, defaults=None):
         """
             Creates instance of YadtConfigParser which will be used to parse the configuration file.
         """
@@ -74,13 +74,13 @@ class ControllerConfigLoader (object):
         return self._parser.read_configuration_file(filename)
 
 
-def load(filename):
+def load(filename, defaults=None):
     """
         loads configuration from a file.
 
         @return: Configuration dictionary containing the data from the file.
     """
-    config_loader = ControllerConfigLoader()
+    config_loader = ControllerConfigLoader(defaults)
 
     try:
         config_loader.read_configuration_file(filename)

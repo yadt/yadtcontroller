@@ -32,7 +32,7 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    '--config-file': '/path/to/config',
                                                                                    '--broadcaster-host': 'host',
                                                                                    '--broadcaster-port': '54321'})
-        when(yadt_controller).load(any_value()).thenReturn({'broadcaster-host': 'localhost',
+        when(yadt_controller).load(any_value(), any_value()).thenReturn({'broadcaster-host': 'localhost',
                                                                                 'broadcaster-port': 12345})
         self.request_emitter_mock = mock(EventHandler)
         when(yadt_controller).EventHandler(any_value(), any_value(), any_value()).thenReturn(self.request_emitter_mock)
@@ -57,14 +57,14 @@ class YadtControllerTests(unittest.TestCase):
 
         verify(yadt_controller).EventHandler('host', '54321', 'target')
 
-    def test_should_load_configuration_file(self):
+    def test_should_load_configuration_file_and_pass_defaults(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
                                                                                    '--broadcaster-host': None,
                                                                                    '<target>': 'target',
                                                                                    '--broadcaster-port': '1234'})
         yadt_controller.run()
 
-        verify(yadt_controller).load('/configuration')
+        verify(yadt_controller).load('/configuration', yadt_controller._get_defaults())
 
     def test_should_initialize_request_emitter_upon_calling_run(self):
         yadt_controller.run()
