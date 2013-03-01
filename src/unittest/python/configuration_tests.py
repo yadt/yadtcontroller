@@ -35,6 +35,12 @@ class ControllerConfigLoaderTests (unittest.TestCase):
         name_of_type = parser._parser.__class__.__name__
         self.assertEqual('YadtConfigParser', name_of_type)
 
+    def test_should_use_provided_defaults(self):
+        loader = ControllerConfigLoader({'--broadcaster-host': 'default-host',
+                                         '--broadcaster-port': 'default-port'})
+        self.assertEqual(loader.DEFAULT_BROADCASTER_HOST, 'default-host')
+        self.assertEqual(loader.DEFAULT_BROADCASTER_PORT, 'default-port')
+
     def test_should_return_broadcaster_host_option(self):
         mock_loader = Mock(ControllerConfigLoader)
         mock_parser = Mock(YadtConfigParser)

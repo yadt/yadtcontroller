@@ -49,6 +49,9 @@ class ControllerConfigLoader (object):
         """
             Creates instance of YadtConfigParser which will be used to parse the configuration file.
         """
+        if defaults:
+            self.DEFAULT_BROADCASTER_HOST = defaults.get('--broadcaster-host')
+            self.DEFAULT_BROADCASTER_PORT = defaults.get('--broadcaster-port')
         self._parser = YadtConfigParser()
 
     def get_broadcaster_host(self):
