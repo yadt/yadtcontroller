@@ -47,8 +47,8 @@ def run():
 
     getLogger().setLevel(INFO)
 
-    request_emitter = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
-    request_emitter.initialize()
+    event_handler = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
+    event_handler.initialize()
 
 
 def _determine_configuration():
