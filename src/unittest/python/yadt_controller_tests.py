@@ -69,7 +69,7 @@ class YadtControllerTests(unittest.TestCase):
     def test_should_initialize_request_emitter_upon_calling_run(self):
         yadt_controller.run()
 
-        verify(self.request_emitter_mock).initialize()
+        verify(self.request_emitter_mock).initialize_for_info_request()
 
     def test_determine_configuration_should_not_override_broadcaster_host_from_config_file_with_default(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',

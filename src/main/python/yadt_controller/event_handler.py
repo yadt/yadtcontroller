@@ -17,6 +17,7 @@
 from yadtbroadcastclient import WampBroadcaster
 from twisted.internet import reactor
 import logging
+import sys
 
 logger = logging.getLogger('event_handler')
 
@@ -39,11 +40,17 @@ class EventHandler(object):
         self.port = port
         self.target = target
 
-    def initialize(self):
+    def initialize_for_info_request(self, timeout=5):
         self.wamp_broadcaster = WampBroadcaster(self.host, self.port, self.target)
         self.wamp_broadcaster.onEvent = self.on_info
         reactor.callWhenRunning(self.wamp_broadcaster.connect)
+        reactor.callLater(timeout, self.on_info_timeout, timeout)
         reactor.run()
+
+    def on_info_timeout(self, timeout):
+        logger.error('Timed out after %s seconds waiting for an info event.' % str(timeout))
+        reactor.stop()
+        sys.exit(1)
 
     def on_info(self, target, info_event):
         logger.info(info_event)

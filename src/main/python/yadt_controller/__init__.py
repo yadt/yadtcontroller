@@ -19,7 +19,7 @@ yadtcontroller
 
 Usage:
 yadtcontroller [options] <target> <waiting_timeout> <pending_timeout> [--] <cmd> <args>...
-yadtcontroller [options] <target> waiting_timeout> info
+yadtcontroller [options] <target> <waiting_timeout> info
 yadtcontroller (-h | --help)
 yadtcontroller --version
 
@@ -49,7 +49,7 @@ def run():
     getLogger().setLevel(INFO)
 
     event_handler = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
-    event_handler.initialize()
+    event_handler.initialize_for_info_request()
 
 
 def _determine_configuration():

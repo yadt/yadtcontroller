@@ -38,6 +38,17 @@ class RequestEmitterTests(unittest.TestCase):
         self.assertEqual(event_handler.port, 8081)
         self.assertEqual(event_handler.target, 'target')
 
+    def test_should_exit_with_error_when_info_request_times_out(self):
+        event_handler = EventHandler('host', 8081, 'target')
+        when(yadt_controller.event_handler.sys).exit(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).stop().thenReturn(None)
+        when(yadt_controller.event_handler.logger).error(any_value()).thenReturn(None)
+
+        event_handler.on_info_timeout(10)
+
+        verify(yadt_controller.event_handler.sys).exit(1)
+        verify(yadt_controller.event_handler.reactor).stop()
+
     def test_should_raise_exception_when_port_is_not_an_integer(self):
         self.assertRaises(ValueError, EventHandler, 'host', 'notaninteger', 'target')
 
@@ -49,34 +60,49 @@ class RequestEmitterTests(unittest.TestCase):
 
     def test_should_create_event_handler_with_configuration(self):
         when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).callLater(any_value(), any_value(), any_value()).thenReturn(None)
         when(yadt_controller.event_handler.reactor).run().thenReturn(None)
 
         event_handler = EventHandler('hostname', 12345, 'target')
-        event_handler.initialize()
+        event_handler.initialize_for_info_request()
 
         verify(yadt_controller.event_handler).WampBroadcaster('hostname', 12345, 'target')
 
     def test_should_add_connect_callback_to_reactor(self):
         when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).callLater(any_value(), any_value(), any_value()).thenReturn(None)
         when(yadt_controller.event_handler.reactor).run().thenReturn(None)
 
         event_handler = EventHandler('hostname', 12345, 'target')
-        event_handler.initialize()
+        event_handler.initialize_for_info_request()
 
         verify(yadt_controller.event_handler.reactor).callWhenRunning(self.wampbroadcaster.connect)
 
     def test_should_set_onevent_callback_when_initializing_wamp_broadcaster(self):
         when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).callLater(any_value(), any_value(), any_value()).thenReturn(None)
         when(yadt_controller.event_handler.reactor).run().thenReturn(None)
 
         event_handler = EventHandler('hostname', 12345, 'target')
-        event_handler.initialize()
+        event_handler.initialize_for_info_request()
 
         self.assertTrue(event_handler.wamp_broadcaster.onEvent == event_handler.on_info)
+
+    def test_should_set_schedule_timeout_when_initializing_wamp_broadcaster_for_info(self):
+        when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).callLater(any_value(), any_value(), any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).callLater(any_value(), any_value(), any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).run().thenReturn(None)
+
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.initialize_for_info_request(timeout=10)
+
+        verify(yadt_controller.event_handler.reactor).callLater(10, event_handler.on_info_timeout, 10)
 
     def test_oninfo_should_stop_reactor(self):
         when(yadt_controller.event_handler.reactor).stop().thenReturn(None)
         when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).callLater(any_value(), any_value(), any_value()).thenReturn(None)
         when(yadt_controller.event_handler.reactor).run().thenReturn(None)
 
         event_handler = EventHandler('hostname', 12345, 'target')
@@ -87,9 +113,10 @@ class RequestEmitterTests(unittest.TestCase):
 
     def test_should_start_reactor(self):
         when(yadt_controller.event_handler.reactor).callWhenRunning(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).callLater(any_value(), any_value(), any_value()).thenReturn(None)
         when(yadt_controller.event_handler.reactor).run().thenReturn(None)
 
         event_handler = EventHandler('hostname', 12345, 'target')
-        event_handler.initialize()
+        event_handler.initialize_for_info_request()
 
         verify(yadt_controller.event_handler.reactor).run()
