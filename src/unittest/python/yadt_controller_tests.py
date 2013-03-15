@@ -27,6 +27,7 @@ class YadtControllerTests(unittest.TestCase):
     def setUp(self):
         when(yadt_controller).basicConfig(format=any_value()).thenReturn(None)
         self.mock_root_logger = mock()
+        when(yadt_controller).getLogger(any_value()).thenReturn(self.mock_root_logger)
         when(yadt_controller).getLogger().thenReturn(self.mock_root_logger)
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'<target>': 'target',
                                                                                    '--config-file': '/path/to/config',
