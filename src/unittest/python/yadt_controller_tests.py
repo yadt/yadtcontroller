@@ -15,7 +15,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from mockito import when, verify, unstub, any as any_value, mock
+from mockito import when, verify, unstub, any as any_value, mock, never
 from docopt import Option
 
 import yadt_controller
@@ -50,7 +50,7 @@ class YadtControllerTests(unittest.TestCase):
     def test_should_parse_command_line_using_docopt_with_program_version_when_run(self):
         yadt_controller.run()
 
-        verify(yadt_controller).docopt(yadt_controller.__doc__, version='${version}')
+        verify(yadt_controller, times=2).docopt(yadt_controller.__doc__, version='${version}')
 
     def test_should_initialize_request_emitter_with_provided_host_and_port(self):
         yadt_controller.run()
@@ -66,10 +66,25 @@ class YadtControllerTests(unittest.TestCase):
 
         verify(yadt_controller).load('/configuration', yadt_controller._get_defaults())
 
-    def test_should_initialize_request_emitter_upon_calling_run(self):
+    def test_should_initialize_for_info_when_info_option_was_given(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
+                                                                                   '--broadcaster-host': None,
+                                                                                   '<target>': 'target',
+                                                                                   '--broadcaster-port': '1234',
+                                                                                   'info': True})
         yadt_controller.run()
 
         verify(self.request_emitter_mock).initialize_for_info_request()
+
+    def test_should_not_initialize_for_info_when_info_option_was_not_given(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
+                                                                                   '--broadcaster-host': None,
+                                                                                   '<target>': 'target',
+                                                                                   '--broadcaster-port': '1234',
+                                                                                   'info': False})
+        yadt_controller.run()
+
+        verify(self.request_emitter_mock, times=never).initialize_for_info_request()
 
     def test_determine_configuration_should_not_override_broadcaster_host_from_config_file_with_default(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',

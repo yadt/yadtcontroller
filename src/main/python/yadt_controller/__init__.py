@@ -49,7 +49,11 @@ def run():
     getLogger().setLevel(INFO)
 
     event_handler = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
-    event_handler.initialize_for_info_request()
+
+    parsed_options = docopt(__doc__, version=__version__)
+
+    if parsed_options.get('info'):
+        event_handler.initialize_for_info_request()
 
 
 def _determine_configuration():
