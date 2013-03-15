@@ -66,7 +66,7 @@ def run():
     parsed_options = docopt(__doc__, version=__version__)
 
     if parsed_options.get('--verbose'):
-        getLogger.setLevel(DEBUG)
+        getLogger().setLevel(DEBUG)
 
     if parsed_options.get(INFO_COMMAND):
         waiting_timeout = int(parsed_options.get(WAITING_TIMEOUT_ARGUMENT))
