@@ -65,12 +65,12 @@ def run():
     parsed_options = docopt(__doc__, version=__version__)
 
     if parsed_options.get(INFO_COMMAND):
-        waiting_timeout = int(parsed_options.get('%s' % WAITING_TIMEOUT_ARGUMENT))
+        waiting_timeout = int(parsed_options.get(WAITING_TIMEOUT_ARGUMENT))
         handler.initialize_for_info_request(timeout=waiting_timeout)
 
     if parsed_options.get(COMMAND_ARGUMENT):
         waiting_timeout = int(parsed_options[WAITING_TIMEOUT_ARGUMENT])
-        pending_timeout = int(parsed_options[('%s' % PENDING_TIMEOUT_ARGUMENT)])
+        pending_timeout = int(parsed_options[PENDING_TIMEOUT_ARGUMENT])
         handler.initialize_for_execution_request(waiting_timeout=waiting_timeout, pending_timeout=pending_timeout)
 
 
@@ -84,10 +84,10 @@ def _determine_configuration():
 
     config[TARGET_KEY] = parsed_options[TARGET_ARGUMENT]
 
-    if defaults[BROADCASTER_HOST_OPTION] != parsed_options[('%s' % BROADCASTER_HOST_OPTION)]:
+    if defaults[BROADCASTER_HOST_OPTION] != parsed_options[BROADCASTER_HOST_OPTION]:
         config[BROADCASTER_HOST_KEY] = parsed_options[BROADCASTER_HOST_OPTION]
 
-    if defaults[BROADCASTER_PORT_OPTION] != parsed_options[('%s' % BROADCASTER_PORT_OPTION)]:
+    if defaults[BROADCASTER_PORT_OPTION] != parsed_options[BROADCASTER_PORT_OPTION]:
         config[BROADCASTER_PORT_KEY] = parsed_options[BROADCASTER_PORT_OPTION]
     return config
 
