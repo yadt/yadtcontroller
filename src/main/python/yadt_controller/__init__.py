@@ -19,6 +19,7 @@ yadtcontroller
 
 Usage:
 yadtcontroller [options] <target> <waiting_timeout> <pending_timeout> [--] <cmd> <args>...
+yadtcontroller [options] <target> waiting_timeout> info
 yadtcontroller (-h | --help)
 yadtcontroller --version
 
