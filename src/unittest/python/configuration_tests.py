@@ -81,7 +81,7 @@ class LoadTest (unittest.TestCase):
         mock_loader = Mock(ControllerConfigLoader)
         mock_loader_class.return_value = mock_loader
 
-        actual_configuration = load('abc')
+        load('abc')
 
         self.assertEqual(call('abc'), mock_loader.read_configuration_file.call_args)
 
