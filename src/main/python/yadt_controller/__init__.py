@@ -38,10 +38,13 @@ Options:
 __version__ = '${version}'
 
 DEFAULT_CONFIGURATION_FILE = '/etc/yadtshell/controller.cfg'
+CONFIG_FILE_OPTION = '--config-file'
 BROADCASTER_PORT_OPTION = '--broadcaster-port'
 BROADCASTER_HOST_OPTION = '--broadcaster-host'
 PENDING_TIMEOUT_ARGUMENT = '<pending_timeout>'
 WAITING_TIMEOUT_ARGUMENT = '<waiting_timeout>'
+TARGET_ARGUMENT = '<target>'
+
 
 from logging import basicConfig, INFO, getLogger
 from docopt import docopt, parse_defaults
@@ -73,11 +76,11 @@ def _determine_configuration():
     parsed_options = docopt(__doc__, version=__version__)
     defaults = _get_defaults()
 
-    configuration_file_name = parsed_options['--config-file']
+    configuration_file_name = parsed_options[CONFIG_FILE_OPTION]
 
     config = load(configuration_file_name, defaults)
 
-    config[TARGET_KEY] = parsed_options['<target>']
+    config[TARGET_KEY] = parsed_options[TARGET_ARGUMENT]
 
     if defaults[BROADCASTER_HOST_OPTION] != parsed_options[('%s' % BROADCASTER_HOST_OPTION)]:
         config[BROADCASTER_HOST_KEY] = parsed_options[BROADCASTER_HOST_OPTION]
