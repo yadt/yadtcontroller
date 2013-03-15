@@ -44,6 +44,8 @@ BROADCASTER_HOST_OPTION = '--broadcaster-host'
 PENDING_TIMEOUT_ARGUMENT = '<pending_timeout>'
 WAITING_TIMEOUT_ARGUMENT = '<waiting_timeout>'
 TARGET_ARGUMENT = '<target>'
+COMMAND_ARGUMENT = '<cmd>'
+INFO_COMMAND = 'info'
 
 
 from logging import basicConfig, INFO, getLogger
@@ -62,11 +64,11 @@ def run():
 
     parsed_options = docopt(__doc__, version=__version__)
 
-    if parsed_options.get('info'):
+    if parsed_options.get(INFO_COMMAND):
         waiting_timeout = int(parsed_options.get('%s' % WAITING_TIMEOUT_ARGUMENT))
         handler.initialize_for_info_request(timeout=waiting_timeout)
 
-    if parsed_options.get('<cmd>'):
+    if parsed_options.get(COMMAND_ARGUMENT):
         waiting_timeout = int(parsed_options[WAITING_TIMEOUT_ARGUMENT])
         pending_timeout = int(parsed_options[('%s' % PENDING_TIMEOUT_ARGUMENT)])
         handler.initialize_for_execution_request(waiting_timeout=waiting_timeout, pending_timeout=pending_timeout)
