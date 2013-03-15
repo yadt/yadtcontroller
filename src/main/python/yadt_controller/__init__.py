@@ -17,6 +17,8 @@
 """
 yadtcontroller
 
+Either obtain information from a YADT broadcaster, or have a remote YADT receiver execute a command.
+
 Usage:
 yadtcontroller [options] <target> <waiting_timeout> <pending_timeout> [--] <cmd> <args>...
 yadtcontroller [options] <target> <waiting_timeout> info
@@ -28,7 +30,8 @@ Options:
 --version     Show version.
 -b <host> --broadcaster-host=<host>   Override broadcaster host to use for publishing [default: localhost].
 -p <port> --broadcaster-port=<port>   Override broadcaster port to use for publishing [default: 8081].
---config-file=<config_file> Load configuration from this file               [default: /etc/yadtshell/controller.cfg].
+--config-file=<config_file> Load configuration from this file                         [default:\
+ /etc/yadtshell/controller.cfg].
 
 """
 
