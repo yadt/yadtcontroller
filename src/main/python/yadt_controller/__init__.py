@@ -28,6 +28,7 @@ yadtcontroller --version
 Options:
 -h --help     Show this screen.
 --version     Show version.
+-v --verbose  Spit out a lot of information.
 -b <host> --broadcaster-host=<host>   Override broadcaster host to use for publishing [default: localhost].
 -p <port> --broadcaster-port=<port>   Override broadcaster port to use for publishing [default: 8081].
 --config-file=<config_file> Load configuration from this file                         [default:\
@@ -48,7 +49,7 @@ COMMAND_ARGUMENT = '<cmd>'
 INFO_COMMAND = 'info'
 
 
-from logging import basicConfig, INFO, getLogger
+from logging import basicConfig, INFO, DEBUG, getLogger
 from docopt import docopt, parse_defaults
 from configuration import BROADCASTER_HOST_KEY, BROADCASTER_PORT_KEY, TARGET_KEY, load
 from yadt_controller.event_handler import EventHandler
@@ -63,6 +64,9 @@ def run():
     handler = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
 
     parsed_options = docopt(__doc__, version=__version__)
+
+    if parsed_options.get('--verbose'):
+        getLogger.setLevel(DEBUG)
 
     if parsed_options.get(INFO_COMMAND):
         waiting_timeout = int(parsed_options.get(WAITING_TIMEOUT_ARGUMENT))

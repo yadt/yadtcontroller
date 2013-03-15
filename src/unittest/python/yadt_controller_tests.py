@@ -77,6 +77,18 @@ class YadtControllerTests(unittest.TestCase):
 
         verify(self.event_handler_mock).initialize_for_info_request(timeout=2)
 
+    def test_should_set_logging_to_debug_when_verbose_option_is_given(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
+                                                                                   '--broadcaster-host': None,
+                                                                                   '<target>': 'target',
+                                                                                   '--broadcaster-port': '1234',
+                                                                                   '<waiting_timeout>': '2',
+                                                                                   'info': True,
+                                                                                   '--verbose': True})
+        yadt_controller.run()
+
+        verify(self.mock_root_logger).setLevel(yadt_controller.DEBUG)
+
     def test_should_initialize_for_command_execution_when_command_execution_option_was_given(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
                                                                                    '--broadcaster-host': None,
