@@ -53,7 +53,8 @@ def run():
     parsed_options = docopt(__doc__, version=__version__)
 
     if parsed_options.get('info'):
-        event_handler.initialize_for_info_request()
+        waiting_timeout = int(parsed_options.get('<waiting_timeout>'))
+        event_handler.initialize_for_info_request(timeout=waiting_timeout)
 
 
 def _determine_configuration():

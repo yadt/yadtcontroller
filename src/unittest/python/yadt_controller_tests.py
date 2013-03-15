@@ -71,10 +71,11 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    '--broadcaster-host': None,
                                                                                    '<target>': 'target',
                                                                                    '--broadcaster-port': '1234',
+                                                                                   '<waiting_timeout>': '2',
                                                                                    'info': True})
         yadt_controller.run()
 
-        verify(self.request_emitter_mock).initialize_for_info_request()
+        verify(self.request_emitter_mock).initialize_for_info_request(timeout=2)
 
     def test_should_not_initialize_for_info_when_info_option_was_not_given(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
