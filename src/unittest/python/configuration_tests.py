@@ -86,7 +86,7 @@ class LoadTest (unittest.TestCase):
         self.assertEqual(call('abc'), mock_loader.read_configuration_file.call_args)
 
     @patch('yadt_controller.configuration.ControllerConfigLoader')
-    def test_should_load_configuration_from_file(self, mock_loader):
+    def test_should_load_defaults(self, mock_loader):
         mock_defaults = Mock()
 
         load('abc', mock_defaults)
