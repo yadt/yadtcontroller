@@ -65,8 +65,7 @@ def run():
 
     parsed_options = docopt(__doc__, version=__version__)
 
-    if parsed_options.get('--verbose'):
-        getLogger().setLevel(DEBUG)
+    _apply_verbose_mode_if_eligible(parsed_options)
 
     if parsed_options.get(INFO_COMMAND):
         waiting_timeout = int(parsed_options.get(WAITING_TIMEOUT_ARGUMENT))
@@ -102,3 +101,8 @@ def _get_defaults():
         if default.name in [BROADCASTER_HOST_OPTION, BROADCASTER_PORT_OPTION]:
             defaults[default.name] = default.value
     return defaults
+
+
+def _apply_verbose_mode_if_eligible(parsed_options):
+    if parsed_options.get('--verbose'):
+        getLogger().setLevel(DEBUG)
