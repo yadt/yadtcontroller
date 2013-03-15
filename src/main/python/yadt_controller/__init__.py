@@ -38,6 +38,10 @@ Options:
 __version__ = '${version}'
 
 DEFAULT_CONFIGURATION_FILE = '/etc/yadtshell/controller.cfg'
+BROADCASTER_PORT_OPTION = '--broadcaster-port'
+BROADCASTER_HOST_OPTION = '--broadcaster-host'
+PENDING_TIMEOUT_ARGUMENT = '<pending_timeout>'
+WAITING_TIMEOUT_ARGUMENT = '<waiting_timeout>'
 
 from logging import basicConfig, INFO, getLogger
 from docopt import docopt, parse_defaults
@@ -56,12 +60,12 @@ def run():
     parsed_options = docopt(__doc__, version=__version__)
 
     if parsed_options.get('info'):
-        waiting_timeout = int(parsed_options.get('<waiting_timeout>'))
+        waiting_timeout = int(parsed_options.get('%s' % WAITING_TIMEOUT_ARGUMENT))
         handler.initialize_for_info_request(timeout=waiting_timeout)
 
     if parsed_options.get('<cmd>'):
-        waiting_timeout = int(parsed_options['<waiting_timeout>'])
-        pending_timeout = int(parsed_options['<pending_timeout>'])
+        waiting_timeout = int(parsed_options[WAITING_TIMEOUT_ARGUMENT])
+        pending_timeout = int(parsed_options[('%s' % PENDING_TIMEOUT_ARGUMENT)])
         handler.initialize_for_execution_request(waiting_timeout=waiting_timeout, pending_timeout=pending_timeout)
 
 
@@ -75,17 +79,17 @@ def _determine_configuration():
 
     config[TARGET_KEY] = parsed_options['<target>']
 
-    if defaults['--broadcaster-host'] != parsed_options['--broadcaster-host']:
-        config[BROADCASTER_HOST_KEY] = parsed_options['--broadcaster-host']
+    if defaults[BROADCASTER_HOST_OPTION] != parsed_options[('%s' % BROADCASTER_HOST_OPTION)]:
+        config[BROADCASTER_HOST_KEY] = parsed_options[BROADCASTER_HOST_OPTION]
 
-    if defaults['--broadcaster-port'] != parsed_options['--broadcaster-port']:
-        config[BROADCASTER_PORT_KEY] = parsed_options['--broadcaster-port']
+    if defaults[BROADCASTER_PORT_OPTION] != parsed_options[('%s' % BROADCASTER_PORT_OPTION)]:
+        config[BROADCASTER_PORT_KEY] = parsed_options[BROADCASTER_PORT_OPTION]
     return config
 
 
 def _get_defaults():
     defaults = {}
     for default in parse_defaults(__doc__):
-        if default.name in ['--broadcaster-host', '--broadcaster-port']:
+        if default.name in [BROADCASTER_HOST_OPTION, BROADCASTER_PORT_OPTION]:
             defaults[default.name] = default.value
     return defaults
