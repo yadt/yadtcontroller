@@ -39,6 +39,7 @@ class EventHandler(object):
         self.host = host
         self.port = port
         self.target = target
+        self.exit_code = None
 
     def initialize_for_info_request(self, timeout=5):
         self.wamp_broadcaster = WampBroadcaster(self.host, self.port, self.target)
@@ -46,12 +47,14 @@ class EventHandler(object):
         reactor.callWhenRunning(self.wamp_broadcaster.connect)
         reactor.callLater(timeout, self.on_info_timeout, timeout)
         reactor.run()
+        sys.exit(self.exit_code)
 
     def on_info_timeout(self, timeout):
         logger.error('Timed out after %s seconds waiting for an info event.' % str(timeout))
+        self.exit_code = 1
         reactor.stop()
-        sys.exit(1)
 
     def on_info(self, target, info_event):
         logger.info(info_event)
+        self.exit_code = 0
         reactor.stop()
