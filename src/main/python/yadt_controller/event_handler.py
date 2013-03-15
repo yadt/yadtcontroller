@@ -49,6 +49,9 @@ class EventHandler(object):
         reactor.run()
         sys.exit(self.exit_code)
 
+    def initialize_for_execution_request(self, waiting_timeout=None, pending_timeout=None):
+        return None
+
     def on_info_timeout(self, timeout):
         logger.error('Timed out after %s seconds waiting for an info event.' % str(timeout))
         self.exit_code = 1

@@ -34,8 +34,8 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    '--broadcaster-port': '54321'})
         when(yadt_controller).load(any_value(), any_value()).thenReturn({'broadcaster-host': 'localhost',
                                                                                 'broadcaster-port': 12345})
-        self.request_emitter_mock = mock(EventHandler)
-        when(yadt_controller).EventHandler(any_value(), any_value(), any_value()).thenReturn(self.request_emitter_mock)
+        self.event_handler_mock = mock(EventHandler)
+        when(yadt_controller).EventHandler(any_value(), any_value(), any_value()).thenReturn(self.event_handler_mock)
 
     def tearDown(self):
         unstub()
@@ -52,7 +52,7 @@ class YadtControllerTests(unittest.TestCase):
 
         verify(yadt_controller, times=2).docopt(yadt_controller.__doc__, version='${version}')
 
-    def test_should_initialize_request_emitter_with_provided_host_and_port(self):
+    def test_should_initialize_event_handler_with_provided_host_and_port(self):
         yadt_controller.run()
 
         verify(yadt_controller).EventHandler('host', '54321', 'target')
@@ -75,7 +75,20 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    'info': True})
         yadt_controller.run()
 
-        verify(self.request_emitter_mock).initialize_for_info_request(timeout=2)
+        verify(self.event_handler_mock).initialize_for_info_request(timeout=2)
+
+    def test_should_initialize_for_command_execution_when_command_execution_option_was_given(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
+                                                                                   '--broadcaster-host': None,
+                                                                                   '<target>': 'target',
+                                                                                   '--broadcaster-port': '1234',
+                                                                                   '<waiting_timeout>': '2',
+                                                                                   '<pending_timeout>': '3',
+                                                                                   'info': False,
+                                                                                   '<cmd>': 'foo'})
+        yadt_controller.run()
+
+        verify(self.event_handler_mock).initialize_for_execution_request(waiting_timeout=2, pending_timeout=3)
 
     def test_should_not_initialize_for_info_when_info_option_was_not_given(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
@@ -85,7 +98,7 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    'info': False})
         yadt_controller.run()
 
-        verify(self.request_emitter_mock, times=never).initialize_for_info_request()
+        verify(self.event_handler_mock, times=never).initialize_for_info_request()
 
     def test_determine_configuration_should_not_override_broadcaster_host_from_config_file_with_default(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',

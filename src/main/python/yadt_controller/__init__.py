@@ -56,6 +56,11 @@ def run():
         waiting_timeout = int(parsed_options.get('<waiting_timeout>'))
         event_handler.initialize_for_info_request(timeout=waiting_timeout)
 
+    if parsed_options.get('<cmd>'):
+        waiting_timeout = int(parsed_options['<waiting_timeout>'])
+        pending_timeout = int(parsed_options['<pending_timeout>'])
+        event_handler.initialize_for_execution_request(waiting_timeout=waiting_timeout, pending_timeout=pending_timeout)
+
 
 def _determine_configuration():
     parsed_options = docopt(__doc__, version=__version__)
