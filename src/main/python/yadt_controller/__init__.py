@@ -71,8 +71,8 @@ def run():
 
     if parsed_options.get(INFO_COMMAND):
         waiting_timeout = int(parsed_options.get(WAITING_TIMEOUT_ARGUMENT))
-        logger.debug('Requesting info on target {0}. Will wait at most {1} second(s) for a reply.'.
-                                                                            format(handler.target, waiting_timeout))
+        info_command_debug_message = 'Requesting info on target {0}. Will wait at most {1} second(s) for a reply.'
+        logger.debug(info_command_debug_message.format(handler.target, waiting_timeout))
         handler.initialize_for_info_request(timeout=waiting_timeout)
 
     if parsed_options.get(COMMAND_ARGUMENT):
