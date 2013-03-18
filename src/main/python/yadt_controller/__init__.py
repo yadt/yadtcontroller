@@ -81,7 +81,15 @@ def run():
         pending_timeout = int(parsed_options[PENDING_TIMEOUT_ARGUMENT])
         command_to_execute = parsed_options[COMMAND_ARGUMENT]
         arguments = parsed_options[ARGUMENT_ARGUMENT]
-        handler.initialize_for_execution_request(waiting_timeout=waiting_timeout, pending_timeout=pending_timeout,
+        message = 'Requesting execution of {0} with arguments {1} on target {2}. Will wait {3} seconds for the ' \
+                  'command to start, and {4} seconds for the command to complete.'
+        logger.debug(message.format(command_to_execute,
+                                    arguments,
+                                    handler.target,
+                                    waiting_timeout,
+                                    pending_timeout))
+        handler.initialize_for_execution_request(waiting_timeout=waiting_timeout,
+                                                 pending_timeout=pending_timeout,
                                                  command_to_execute=command_to_execute,
                                                  arguments=arguments)
 
