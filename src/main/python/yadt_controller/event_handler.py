@@ -92,30 +92,31 @@ class EventHandler(object):
         self.wamp_broadcaster = WampBroadcaster(self.host, self.port, self.target)
 
     def on_command_execution_event(self, target, event):
-        if event.get('tracking_id') == self.tracking_id:
-            payload = None
-            if event.get('payload'):
-                try:
-                    payload = ' '.join(
-                        ['%s=%s' % (key, value)
-                         for d in event.get('payload')
-                         for key, value in d.iteritems()])
-                except Exception:
-                    pass
-            logger.info('Event "%s" received' % ' '.join(filter(None,
-                                                                [event['id'],
-                                                                 event.get('cmd'),
-                                                                 event.get('state'),
-                                                                 payload])))
-            if event.get('state'):
-                fun = getattr(self.execution_state_machine, event.get('state'))
-                if fun:
-                    previous_fsm_state = self.execution_state_machine.current
-                    fun(msg=event['id'])
-                    current_fsm_state = self.execution_state_machine.current
-                    logger.debug('Transition from "{0}" to "{1}" since event "{2}" occured.'.format(previous_fsm_state,
-                                                                                                    current_fsm_state,
-                                                                                                    event['state']))
+        if event.get('tracking_id') != self.tracking_id:
+            return
+        payload = None
+        if event.get('payload'):
+            try:
+                payload = ' '.join(
+                    ['%s=%s' % (key, value)
+                     for d in event.get('payload')
+                     for key, value in d.iteritems()])
+            except Exception:
+                pass
+        logger.info('Event "%s" received' % ' '.join(filter(None,
+                                                            [event['id'],
+                                                             event.get('cmd'),
+                                                             event.get('state'),
+                                                             payload])))
+        if event.get('state'):
+            fun = getattr(self.execution_state_machine, event.get('state'))
+            if fun:
+                previous_fsm_state = self.execution_state_machine.current
+                fun(msg=event['id'])
+                current_fsm_state = self.execution_state_machine.current
+                logger.debug('Transition from "{0}" to "{1}" since event "{2}" occured.'.format(previous_fsm_state,
+                                                                                                current_fsm_state,
+                                                                                                event['state']))
 
     def on_waiting_command_execution(self, event):
         reactor.callLater(self.waiting_timeout, self.execution_state_machine.waiting_timeout)
