@@ -52,8 +52,14 @@ INFO_COMMAND = 'info'
 
 from logging import basicConfig, INFO, DEBUG, getLogger
 from docopt import docopt, parse_defaults
+
 from configuration import BROADCASTER_HOST_KEY, BROADCASTER_PORT_KEY, TARGET_KEY, load
 from yadt_controller.event_handler import EventHandler
+from yadt_controller.tracking import generate_tracking_id
+
+
+def _add_generated_tracking_id_to_arguments(arguments, handler):
+    arguments.append('--tracking-id="{0}"'.format(generate_tracking_id(handler.target)))
 
 
 def run():
@@ -62,7 +68,7 @@ def run():
 
     getLogger().setLevel(INFO)
 
-    handler = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
+    event_handler = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
 
     parsed_options = docopt(__doc__, version=__version__)
 
@@ -73,25 +79,28 @@ def run():
     if parsed_options.get(INFO_COMMAND):
         waiting_timeout = int(parsed_options.get(WAITING_TIMEOUT_ARGUMENT))
         info_command_debug_message = 'Requesting info on target {0}. Will wait at most {1} second(s) for a reply.'
-        logger.debug(info_command_debug_message.format(handler.target, waiting_timeout))
-        handler.initialize_for_info_request(timeout=waiting_timeout)
+        logger.debug(info_command_debug_message.format(event_handler.target, waiting_timeout))
+        event_handler.initialize_for_info_request(timeout=waiting_timeout)
 
     if parsed_options.get(COMMAND_ARGUMENT):
         waiting_timeout = int(parsed_options[WAITING_TIMEOUT_ARGUMENT])
         pending_timeout = int(parsed_options[PENDING_TIMEOUT_ARGUMENT])
         command_to_execute = parsed_options[COMMAND_ARGUMENT]
         arguments = parsed_options[ARGUMENT_ARGUMENT]
+
+        _add_generated_tracking_id_to_arguments(arguments, event_handler)
+
         message = 'Requesting execution of {0} with arguments {1} on target {2}. Will wait {3} seconds for the ' \
                   'command to start, and {4} seconds for the command to complete.'
         logger.debug(message.format(command_to_execute,
                                     arguments,
-                                    handler.target,
+                                    event_handler.target,
                                     waiting_timeout,
                                     pending_timeout))
-        handler.initialize_for_execution_request(waiting_timeout=waiting_timeout,
-                                                 pending_timeout=pending_timeout,
-                                                 command_to_execute=command_to_execute,
-                                                 arguments=arguments)
+        event_handler.initialize_for_execution_request(waiting_timeout=waiting_timeout,
+                                                       pending_timeout=pending_timeout,
+                                                       command_to_execute=command_to_execute,
+                                                       arguments=arguments)
 
 
 def _determine_configuration():

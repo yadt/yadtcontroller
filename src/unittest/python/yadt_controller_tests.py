@@ -90,7 +90,8 @@ class YadtControllerTests(unittest.TestCase):
 
         verify(self.mock_root_logger).setLevel(yadt_controller.DEBUG)
 
-    def test_should_initialize_for_command_execution_when_command_execution_option_was_given(self):
+    def test_should_initialize_for_command_execution_with_tracking_id_when_command_execution_option_was_given(self):
+        when(yadt_controller).generate_tracking_id(any_value()).thenReturn('test')
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
                                                                                    '--broadcaster-host': None,
                                                                                    '<target>': 'target',
@@ -104,7 +105,9 @@ class YadtControllerTests(unittest.TestCase):
 
         verify(self.event_handler_mock).initialize_for_execution_request(waiting_timeout=2, pending_timeout=3,
                                                                          command_to_execute='foo',
-                                                                         arguments=['bar', 'baz'])
+                                                                         arguments=['bar',
+                                                                                    'baz',
+                                                                                    '--tracking-id="test"'])
 
     def test_should_not_initialize_for_info_when_info_option_was_not_given(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
