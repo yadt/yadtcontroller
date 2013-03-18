@@ -90,6 +90,32 @@ class YadtControllerTests(unittest.TestCase):
 
         verify(self.mock_root_logger).setLevel(yadt_controller.DEBUG)
 
+    def test_should_set_logging_to_warn_when_quiet_option_is_given(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
+                                                                                   '--broadcaster-host': None,
+                                                                                   '<target>': 'target',
+                                                                                   '--broadcaster-port': '1234',
+                                                                                   '<waiting_timeout>': '2',
+                                                                                   'info': True,
+                                                                                   '--verbose': False,
+                                                                                   '--quiet': True})
+        yadt_controller.run()
+
+        verify(self.mock_root_logger).setLevel(yadt_controller.WARN)
+
+    def test_should_set_loglevel_to_warn_when_verbose_and_quiet_flags_are_both_given(self):
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
+                                                                                   '--broadcaster-host': None,
+                                                                                   '<target>': 'target',
+                                                                                   '--broadcaster-port': '1234',
+                                                                                   '<waiting_timeout>': '2',
+                                                                                   'info': True,
+                                                                                   '--verbose': True,
+                                                                                   '--quiet': True})
+        yadt_controller.run()
+
+        verify(self.mock_root_logger).setLevel(yadt_controller.WARN)
+
     def test_should_initialize_for_command_execution_with_tracking_id_when_command_execution_option_was_given(self):
         when(yadt_controller).generate_tracking_id(any_value()).thenReturn('test')
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',

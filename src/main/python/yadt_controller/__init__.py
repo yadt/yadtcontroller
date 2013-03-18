@@ -29,6 +29,7 @@ Options:
 -h --help     Show this screen.
 --version     Show version.
 -v --verbose  Spit out a lot of information.
+-q --quiet    Be especially quiet (overrides the verbose flag).
 -b <host> --broadcaster-host=<host>   Override broadcaster host to use for publishing [default: localhost].
 -p <port> --broadcaster-port=<port>   Override broadcaster port to use for publishing [default: 8081].
 --config-file=<config_file> Load configuration from this file                         [default:\
@@ -50,7 +51,7 @@ ARGUMENT_ARGUMENT = '<args>'
 INFO_COMMAND = 'info'
 
 
-from logging import basicConfig, INFO, DEBUG, getLogger
+from logging import basicConfig, INFO, DEBUG, WARN, getLogger
 from docopt import docopt, parse_defaults
 
 from configuration import BROADCASTER_HOST_KEY, BROADCASTER_PORT_KEY, TARGET_KEY, load
@@ -62,13 +63,13 @@ def run():
     basicConfig(format='[%(levelname)s] %(message)s')
     getLogger().setLevel(INFO)
 
+    parsed_options = docopt(__doc__, version=__version__)
+
+    _apply_log_level_configuration_from_options(parsed_options)
+
     config = _determine_configuration()
 
     event_handler = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
-
-    parsed_options = docopt(__doc__, version=__version__)
-
-    _apply_verbose_mode_if_eligible(parsed_options)
 
     logger = getLogger('yadt_controller')
 
@@ -127,9 +128,11 @@ def _get_defaults():
     return defaults
 
 
-def _apply_verbose_mode_if_eligible(parsed_options):
+def _apply_log_level_configuration_from_options(parsed_options):
     if parsed_options.get('--verbose'):
         getLogger().setLevel(DEBUG)
+    if parsed_options.get('--quiet'):
+        getLogger().setLevel(WARN)
 
 
 def _add_generated_tracking_id_to_arguments(arguments, handler):
