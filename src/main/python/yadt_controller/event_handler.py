@@ -92,7 +92,7 @@ class EventHandler(object):
         self.wamp_broadcaster = WampBroadcaster(self.host, self.port, self.target)
 
     def on_command_execution_event(self, target, event):
-        if event.get('tracking_id') and event['tracking_id'] == self.tracking_id:
+        if event.get('tracking_id') == self.tracking_id:
             payload = None
             if event.get('payload'):
                 try:
