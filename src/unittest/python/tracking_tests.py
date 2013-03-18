@@ -32,7 +32,7 @@ class TrackingTests(unittest.TestCase):
         when(yadt_controller.tracking).get_timestamp().thenReturn('timestamp')
         actual_tracking_id = generate_tracking_id('target')
 
-        self.assertEqual('(timestamp):user@host->target', actual_tracking_id)
+        self.assertEqual('"(timestamp):user@host->target"', actual_tracking_id)
 
         verify(yadt_controller.tracking.getpass).getuser()
         verify(yadt_controller.tracking.socket).getfqdn()

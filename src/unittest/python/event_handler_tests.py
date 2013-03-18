@@ -16,7 +16,7 @@
 
 import unittest
 from yadtbroadcastclient import WampBroadcaster
-from mockito import when, verify, unstub, any as any_value, mock
+from mockito import when, verify, unstub, any as any_value, mock, never
 import yadt_controller.configuration
 from yadt_controller.event_handler import EventHandler
 
@@ -277,10 +277,11 @@ class EventHandlerTests(unittest.TestCase):
 
     def test_on_command_execution_event_should_log_payload_if_present(self):
         event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.tracking_id = '123'
         event={'id': 'service-change',
                'type': 'event',
                'target': 'target',
-               'tracking_id': None,
+               'tracking_id': '123',
                'payload': [{'state': 'up',
                             'uri': 'service://host/service'}]}
 
@@ -289,10 +290,27 @@ class EventHandlerTests(unittest.TestCase):
         verify(yadt_controller.event_handler.logger).\
             info('Event "service-change state=up uri=service://host/service" received')
 
+    def test_on_command_execution_event_should_not_do_anything_if_tracking_id_does_not_match(self):
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.tracking_id = 'something-else'
+        event={'id': 'service-change',
+               'type': 'event',
+               'target': 'target',
+               'tracking_id': '123',
+               'payload': [{'state': 'up',
+                            'uri': 'service://host/service'}]}
+
+        event_handler.on_command_execution_event('target', event)
+
+        verify(yadt_controller.event_handler.logger, never). \
+            info('Event "service-change state=up uri=service://host/service" received')
+
     def test_on_command_execution_event_should_eat_exceptions_from_malformed_events(self):
         event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.tracking_id = 'test'
         malformed_event = {'id': 'service-change',
                            'type': 'event',
+                           'tracking_id': 'test',
                            'payload': {
                                'state': 1,
                                'uri': 'service://host/service'}}
@@ -302,15 +320,33 @@ class EventHandlerTests(unittest.TestCase):
     def test_on_command_execution_event_should_call_state_machine_transition_when_state_change_occurs(self):
         mock_state_machine = mock()
         event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.tracking_id = '123'
         event_handler.execution_state_machine = mock_state_machine
         when(mock_state_machine).test_state(msg=any_value()).thenReturn(None)
 
         event = {'cmd': 'update',
                  'state': 'test_state',
-                 'tracking_id': None,
+                 'tracking_id': '123',
                  'message': None,
                  'type': 'event',
                  'id': 'cmd'}
         event_handler.on_command_execution_event('target', event)
 
         verify(mock_state_machine).test_state(msg='cmd')
+
+    def test_on_command_execution_event_should_not_call_state_machine_transition_when_id_does_not_match(self):
+        mock_state_machine = mock()
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.tracking_id = 'something-else'
+        event_handler.execution_state_machine = mock_state_machine
+        when(mock_state_machine).test_state(msg=any_value()).thenReturn(None)
+
+        event = {'cmd': 'update',
+                 'state': 'test_state',
+                 'tracking_id': '123',
+                 'message': None,
+                 'type': 'event',
+                 'id': 'cmd'}
+        event_handler.on_command_execution_event('target', event)
+
+        verify(mock_state_machine, never).test_state(msg='cmd')

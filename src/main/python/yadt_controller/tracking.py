@@ -23,7 +23,7 @@ def generate_tracking_id(target):
     user_name = getpass.getuser()
     user_host_name = socket.getfqdn()
     timestamp = get_timestamp()
-    return '({0}):{1}@{2}->{3}'.format(timestamp, user_name, user_host_name, target)
+    return '"({0}):{1}@{2}->{3}"'.format(timestamp, user_name, user_host_name, target)
 
 
 # datetime.so cannot be monkey-patched, so isolate it instead

@@ -58,10 +58,6 @@ from yadt_controller.event_handler import EventHandler
 from yadt_controller.tracking import generate_tracking_id
 
 
-def _add_generated_tracking_id_to_arguments(arguments, handler):
-    arguments.append('--tracking-id="{0}"'.format(generate_tracking_id(handler.target)))
-
-
 def run():
     basicConfig(format='[%(levelname)s] %(message)s')
     config = _determine_configuration()
@@ -88,7 +84,7 @@ def run():
         command_to_execute = parsed_options[COMMAND_ARGUMENT]
         arguments = parsed_options[ARGUMENT_ARGUMENT]
 
-        _add_generated_tracking_id_to_arguments(arguments, event_handler)
+        tracking_id = _add_generated_tracking_id_to_arguments(arguments, event_handler)
 
         message = 'Requesting execution of {0} with arguments {1} on target {2}. Will wait {3} seconds for the ' \
                   'command to start, and {4} seconds for the command to complete.'
@@ -97,10 +93,12 @@ def run():
                                     event_handler.target,
                                     waiting_timeout,
                                     pending_timeout))
+
         event_handler.initialize_for_execution_request(waiting_timeout=waiting_timeout,
                                                        pending_timeout=pending_timeout,
                                                        command_to_execute=command_to_execute,
-                                                       arguments=arguments)
+                                                       arguments=arguments,
+                                                       tracking_id=tracking_id)
 
 
 def _determine_configuration():
@@ -132,3 +130,9 @@ def _get_defaults():
 def _apply_verbose_mode_if_eligible(parsed_options):
     if parsed_options.get('--verbose'):
         getLogger().setLevel(DEBUG)
+
+
+def _add_generated_tracking_id_to_arguments(arguments, handler):
+    tracking_id = generate_tracking_id(handler.target)
+    arguments.append('--tracking-id={0}'.format(tracking_id))
+    return tracking_id

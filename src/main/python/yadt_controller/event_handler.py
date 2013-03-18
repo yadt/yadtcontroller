@@ -54,12 +54,16 @@ class EventHandler(object):
     def initialize_for_execution_request(self, waiting_timeout=None,
                                          pending_timeout=None,
                                          command_to_execute=None,
-                                         arguments=None):
+                                         arguments=None,
+                                         tracking_id=None):
+        self.tracking_id = tracking_id
         self.waiting_timeout = waiting_timeout
         self.pending_timeout = pending_timeout
         self.command_to_execute = command_to_execute
         self.arguments = arguments
+
         self._prepare_broadcast_client()
+
         self.execution_state_machine = \
             create_execution_state_machine_with_callbacks(self.on_waiting_command_execution,
                                                           self.on_failed_command_execution,
@@ -88,29 +92,30 @@ class EventHandler(object):
         self.wamp_broadcaster = WampBroadcaster(self.host, self.port, self.target)
 
     def on_command_execution_event(self, target, event):
-        payload = None
-        if event.get('payload'):
-            try:
-                payload = ' '.join(
-                    ['%s=%s' % (key, value)
-                     for d in event.get('payload')
-                     for key, value in d.iteritems()])
-            except Exception:
-                pass
-        logger.info('Event "%s" received' % ' '.join(filter(None,
-                                                            [event['id'],
-                                                             event.get('cmd'),
-                                                             event.get('state'),
-                                                             payload])))
-        if event.get('state'):
-            fun = getattr(self.execution_state_machine, event.get('state'))
-            if fun:
-                previous_fsm_state = self.execution_state_machine.current
-                fun(msg=event['id'])
-                current_fsm_state = self.execution_state_machine.current
-                logger.debug('Transition from "{0}" to "{1}" since event "{2}" occured.'.format(previous_fsm_state,
-                                                                                                current_fsm_state,
-                                                                                                event['state']))
+        if event.get('tracking_id') and event['tracking_id'] == self.tracking_id:
+            payload = None
+            if event.get('payload'):
+                try:
+                    payload = ' '.join(
+                        ['%s=%s' % (key, value)
+                         for d in event.get('payload')
+                         for key, value in d.iteritems()])
+                except Exception:
+                    pass
+            logger.info('Event "%s" received' % ' '.join(filter(None,
+                                                                [event['id'],
+                                                                 event.get('cmd'),
+                                                                 event.get('state'),
+                                                                 payload])))
+            if event.get('state'):
+                fun = getattr(self.execution_state_machine, event.get('state'))
+                if fun:
+                    previous_fsm_state = self.execution_state_machine.current
+                    fun(msg=event['id'])
+                    current_fsm_state = self.execution_state_machine.current
+                    logger.debug('Transition from "{0}" to "{1}" since event "{2}" occured.'.format(previous_fsm_state,
+                                                                                                    current_fsm_state,
+                                                                                                    event['state']))
 
     def on_waiting_command_execution(self, event):
         reactor.callLater(self.waiting_timeout, self.execution_state_machine.waiting_timeout)
