@@ -312,7 +312,7 @@ class EventHandlerTests(unittest.TestCase):
                            'type': 'event',
                            'tracking_id': 'test',
                            'payload': {
-                               'state': 1,
+                               'state': 1,  # blows up if uncaught
                                'uri': 'service://host/service'}}
 
         event_handler.on_command_execution_event('target', malformed_event)
