@@ -93,10 +93,14 @@ class EventHandler(object):
 
     def on_command_execution_event(self, target, event):
         if event.get('tracking_id') != self.tracking_id:
-            logger.debug('Ignoring event {0} {1} with a foreign tracking ID: {2}.'.format(event.get('id'),
-                                                                                          event.get('state'),
-                                                                                          event.get('tracking_id')))
+            if event.get('state'):
+                event_description = '{0} {1}'.format(event.get('id'), event.get('state'))
+            else:
+                event_description = '{0}'.format(event.get('id'))
+            logger.debug('Ignoring event {0} with a foreign tracking ID: {1}.'.format(event_description,
+                                                                                      event.get('tracking_id')))
             return
+
         payload = None
         if event.get('payload'):
             try:
