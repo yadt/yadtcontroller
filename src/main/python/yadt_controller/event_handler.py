@@ -19,6 +19,8 @@ from twisted.internet import reactor
 import logging
 import sys
 
+from execution_state_machine import create_execution_state_machine_with_callbacks
+
 logger = logging.getLogger('event_handler')
 
 
@@ -49,9 +51,28 @@ class EventHandler(object):
         reactor.run()
         sys.exit(self.exit_code)
 
-    def initialize_for_execution_request(self, waiting_timeout=None, pending_timeout=None, command_to_execute=None,
+    def initialize_for_execution_request(self, waiting_timeout=None,
+                                         pending_timeout=None,
+                                         command_to_execute=None,
                                          arguments=None):
-        return None
+        self.waiting_timeout = waiting_timeout
+        self.pending_timeout = pending_timeout
+        self.command_to_execute = command_to_execute
+        self.arguments = arguments
+        self._prepare_broadcast_client()
+        self.execution_state_machine = \
+            create_execution_state_machine_with_callbacks(self.on_waiting_command_execution,
+                                                          self.on_failed_command_execution,
+                                                          self.on_pending_command_execution,
+                                                          self.on_command_execution_success,
+                                                          self.on_command_execution_failure,
+                                                          self.on_execution_waiting_timeout,
+                                                          self.on_execution_pending_timeout)
+        self.wamp_broadcaster.onEvent = self.on_command_execution_event
+        self.wamp_broadcaster.addOnSessionOpenHandler(self.publish_execution_request)
+        reactor.callWhenRunning(self.wamp_broadcaster.connect)
+        reactor.run()
+        sys.exit(self.exit_code)
 
     def on_info_timeout(self, timeout):
         logger.error('Timed out after %s seconds waiting for an info event.' % str(timeout))
@@ -65,3 +86,60 @@ class EventHandler(object):
 
     def _prepare_broadcast_client(self):
         self.wamp_broadcaster = WampBroadcaster(self.host, self.port, self.target)
+
+    def on_command_execution_event(self, target, event):
+        payload = None
+        if event.get('payload'):
+            try:
+                payload = ' '.join(
+                    ['%s=%s' % (key, value)
+                     for d in event.get('payload')
+                     for key, value in d.iteritems()])
+            except Exception:
+                pass
+        logger.info('Event "%s" received' % ' '.join(filter(None,
+                                                            [event['id'],
+                                                             event.get('cmd'),
+                                                             event.get('state'),
+                                                             payload])))
+        if event.get('state'):
+            fun = getattr(self.execution_state_machine, event.get('state'))
+            if fun:
+                previous_fsm_state = self.execution_state_machine.current
+                fun(msg=event['id'])
+                current_fsm_state = self.execution_state_machine.current
+                logger.debug('Transition from "{0}" to "{1}" since event "{2}" occured.'.format(previous_fsm_state,
+                                                                                                current_fsm_state,
+                                                                                                event['state']))
+
+    def on_waiting_command_execution(self, event):
+        reactor.callLater(self.waiting_timeout, self.execution_state_machine.waiting_timeout)
+
+    def on_pending_command_execution(self, event):
+        reactor.callLater(self.pending_timeout, self.execution_state_machine.pending_timeout)
+
+    def on_failed_command_execution(self, event):
+        if event.src == 'waiting':
+            logger.warn('Command execution has not started yet, but got a failure event. Waiting for other receivers.')
+        else:
+            logger.error('The command failed.')
+
+    def on_command_execution_success(self, event):
+        self.exit_code = 0
+        reactor.stop()
+
+    def on_command_execution_failure(self, event):
+        logger.error('Command execution failed.')
+        self.exit_code = 1
+        reactor.stop()
+
+    def publish_execution_request(self):
+        logger.debug('Publishing execution request : execute {0} on {1}'.format(self.command_to_execute, self.target))
+        self.execution_state_machine.request(message='Execute {0} on {1}.'.format(self.command_to_execute, self.target))
+        self.wamp_broadcaster.publish_request_for_target(self.target, self.command_to_execute, self.arguments)
+
+    def on_execution_waiting_timeout(self, event):
+        logger.error('Timed out waiting for the command execution to start.')
+
+    def on_execution_pending_timeout(self, event):
+        logger.error('Execution started and pending, but timed out while waiting for it to complete.')
