@@ -27,5 +27,5 @@ def generate_tracking_id(target):
 
 
 # datetime.so cannot be monkey-patched, so isolate it instead
-def get_timestamp():
+def get_timestamp():  # pragma: no cover
     return str(datetime.now())

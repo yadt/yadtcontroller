@@ -46,6 +46,7 @@ PENDING_TIMEOUT_ARGUMENT = '<pending_timeout>'
 WAITING_TIMEOUT_ARGUMENT = '<waiting_timeout>'
 TARGET_ARGUMENT = '<target>'
 COMMAND_ARGUMENT = '<cmd>'
+ARGUMENT_ARGUMENT = '<args>'
 INFO_COMMAND = 'info'
 
 
@@ -78,7 +79,11 @@ def run():
     if parsed_options.get(COMMAND_ARGUMENT):
         waiting_timeout = int(parsed_options[WAITING_TIMEOUT_ARGUMENT])
         pending_timeout = int(parsed_options[PENDING_TIMEOUT_ARGUMENT])
-        handler.initialize_for_execution_request(waiting_timeout=waiting_timeout, pending_timeout=pending_timeout)
+        command_to_execute = parsed_options[COMMAND_ARGUMENT]
+        arguments = parsed_options[ARGUMENT_ARGUMENT]
+        handler.initialize_for_execution_request(waiting_timeout=waiting_timeout, pending_timeout=pending_timeout,
+                                                 command_to_execute=command_to_execute,
+                                                 arguments=arguments)
 
 
 def _determine_configuration():

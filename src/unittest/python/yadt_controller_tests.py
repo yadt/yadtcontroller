@@ -98,10 +98,13 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    '<waiting_timeout>': '2',
                                                                                    '<pending_timeout>': '3',
                                                                                    'info': False,
-                                                                                   '<cmd>': 'foo'})
+                                                                                   '<cmd>': 'foo',
+                                                                                   '<args>': ['bar', 'baz']})
         yadt_controller.run()
 
-        verify(self.event_handler_mock).initialize_for_execution_request(waiting_timeout=2, pending_timeout=3)
+        verify(self.event_handler_mock).initialize_for_execution_request(waiting_timeout=2, pending_timeout=3,
+                                                                         command_to_execute='foo',
+                                                                         arguments=['bar', 'baz'])
 
     def test_should_not_initialize_for_info_when_info_option_was_not_given(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
