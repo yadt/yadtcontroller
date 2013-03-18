@@ -60,9 +60,9 @@ from yadt_controller.tracking import generate_tracking_id
 
 def run():
     basicConfig(format='[%(levelname)s] %(message)s')
-    config = _determine_configuration()
-
     getLogger().setLevel(INFO)
+
+    config = _determine_configuration()
 
     event_handler = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
 
