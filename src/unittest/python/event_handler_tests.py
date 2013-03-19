@@ -33,6 +33,7 @@ class EventHandlerTests(unittest.TestCase):
                                                             any_value(),
                                                             any_value()).thenReturn(self.wampbroadcaster)
         when(yadt_controller.event_handler.logger).info(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.logger).error(any_value()).thenReturn(None)
         when(yadt_controller.event_handler.sys).exit(any_value()).thenReturn(None)
 
     def tearDown(self):
@@ -223,7 +224,7 @@ class EventHandlerTests(unittest.TestCase):
         event_handler.on_command_execution_failure(mock())
 
         self.assertEqual(event_handler.exit_code, 1)
-        verify(yadt_controller.event_handler.reactor).stop()
+        verify(yadt_controller.event_handler.reactor).callLater(10, yadt_controller.event_handler.reactor.stop)
 
     def test_on_waiting_command_execution_should_schedule_waiting_timeout(self):
         event_handler = EventHandler('hostname', 12345, 'target')
@@ -289,6 +290,26 @@ class EventHandlerTests(unittest.TestCase):
 
         verify(yadt_controller.event_handler.logger).\
             info('Event "service-change state=up uri=service://host/service" received')
+
+    def test_on_command_execution_event_should_log_error_abstract(self):
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.tracking_id = '123'
+        mock_state_machine = mock()
+        event_handler.execution_state_machine = mock_state_machine
+        when(mock_state_machine).test_state(msg=any_value()).thenReturn(None)
+        event={'id': 'cmd',
+               'type': 'event',
+               'target': 'target',
+               'tracking_id': '123',
+               'state': 'failed',
+               'message': 'The internet was shut down.\nSeriously.'}
+
+        event_handler.on_command_execution_event('target', event)
+
+        verify(yadt_controller.event_handler.logger). \
+            error('The internet was shut down.')
+        verify(yadt_controller.event_handler.logger). \
+            error('Seriously.')
 
     def test_on_command_execution_event_should_not_do_anything_if_tracking_id_does_not_match(self):
         event_handler = EventHandler('hostname', 12345, 'target')

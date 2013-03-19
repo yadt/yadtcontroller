@@ -98,8 +98,11 @@ class EventHandler(object):
                                                                                       event.get('tracking_id')))
             return
 
-        self._pretty_print_event(event)
+        if event.get('id') == 'cmd' and event.get('state') and event.get('message'):
+            for error_message_line in event.get('message').split('\n'):
+                logger.error(error_message_line)
 
+        self._pretty_print_event(event)
         self._apply_state_transition_to_state_machine(event)
 
     def on_waiting_command_execution(self, event):
@@ -119,9 +122,9 @@ class EventHandler(object):
         reactor.stop()
 
     def on_command_execution_failure(self, event):
-        logger.error('Command execution failed.')
+        logger.debug('Waiting for possible error reports from a receiver..')
         self.exit_code = 1
-        reactor.stop()
+        reactor.callLater(10, reactor.stop)
 
     def publish_execution_request(self):
         logger.debug('Publishing execution request : execute {0} on {1}'.format(self.command_to_execute, self.target))
