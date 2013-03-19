@@ -21,6 +21,7 @@ def create_execution_state_machine_with_callbacks(waiting_callback,
             {'name': 'started', 'src': 'waiting', 'dst': 'pending'},
             {'name': 'pending_timeout', 'src': 'pending', 'dst': 'failure'},
             {'name': 'failed', 'src': 'pending', 'dst': 'failure'},
+            {'name': 'failed', 'src': 'failure', 'dst': 'failure'},
             {'name': 'finished', 'src': 'pending', 'dst': 'success'},
             {'name': 'started', 'src': 'pending', 'dst': 'pending'}
         ],
