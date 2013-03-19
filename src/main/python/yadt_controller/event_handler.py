@@ -148,6 +148,7 @@ class EventHandler(object):
 
     def _output_error_report(self, event):
         if self._event_is_an_error_report(event):
+            logger.error('*' * 5 + 'Error report' + '*' * 5)
             for error_message_line in event.get('message').split('\n'):
                 logger.error(error_message_line)
 
