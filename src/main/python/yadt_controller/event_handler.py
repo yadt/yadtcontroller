@@ -98,9 +98,7 @@ class EventHandler(object):
                                                                                       event.get('tracking_id')))
             return
 
-        if event.get('id') == 'cmd' and event.get('state') and event.get('message'):
-            for error_message_line in event.get('message').split('\n'):
-                logger.error(error_message_line)
+        self._output_error_report(event)
 
         self._pretty_print_event(event)
         self._apply_state_transition_to_state_machine(event)
@@ -139,6 +137,14 @@ class EventHandler(object):
 
     def _prepare_broadcast_client(self):
         self.wamp_broadcaster = WampBroadcaster(self.host, self.port, self.target)
+
+    def _output_error_report(self, event):
+        if self._event_is_an_error_report(event):
+            for error_message_line in event.get('message').split('\n'):
+                logger.error(error_message_line)
+
+    def _event_is_an_error_report(self, event):
+        return event.get('id') == 'cmd' and event.get('state') and event.get('message')
 
     def _apply_state_transition_to_state_machine(self, event):
         if event.get('state'):
