@@ -33,7 +33,9 @@ class EventHandlerTests(unittest.TestCase):
                                                             any_value(),
                                                             any_value()).thenReturn(self.wampbroadcaster)
         when(yadt_controller.event_handler.logger).info(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.logger).debug(any_value()).thenReturn(None)
         when(yadt_controller.event_handler.logger).error(any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.logger).warn(any_value()).thenReturn(None)
         when(yadt_controller.event_handler.sys).exit(any_value()).thenReturn(None)
 
     def tearDown(self):
@@ -289,7 +291,7 @@ class EventHandlerTests(unittest.TestCase):
         event_handler.on_command_execution_event('target', event)
 
         verify(yadt_controller.event_handler.logger).\
-            info('Event "service-change state=up uri=service://host/service" received')
+            debug('Event "service-change state=up uri=service://host/service" received')
 
     def test_on_command_execution_event_should_log_error_abstract(self):
         event_handler = EventHandler('hostname', 12345, 'target')

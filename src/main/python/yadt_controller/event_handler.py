@@ -98,10 +98,13 @@ class EventHandler(object):
                                                                                       event.get('tracking_id')))
             return
 
-        self._output_error_report(event)
-
-        self._pretty_print_event(event)
-        self._apply_state_transition_to_state_machine(event)
+        try:
+            self._pretty_print_event(event)
+            self._output_error_report(event)
+            self._output_service_change(event)
+            self._apply_state_transition_to_state_machine(event)
+        except:
+            pass
 
     def on_waiting_command_execution(self, event):
         reactor.callLater(self.waiting_timeout, self.execution_state_machine.waiting_timeout)
@@ -138,6 +141,11 @@ class EventHandler(object):
     def _prepare_broadcast_client(self):
         self.wamp_broadcaster = WampBroadcaster(self.host, self.port, self.target)
 
+    def _output_service_change(self, event):
+        if event.get('id') == 'service-change' and event.get('payload'):
+            for service_change in event.get('payload'):
+                logger.info('{0} is now {1}.'.format(service_change.get('uri'), service_change.get('state')))
+
     def _output_error_report(self, event):
         if self._event_is_an_error_report(event):
             for error_message_line in event.get('message').split('\n'):
@@ -159,16 +167,16 @@ class EventHandler(object):
 
     def _pretty_print_event(self, event):
         payload = None
-        if event.get('payload'):
-            try:
+        try:
+            if event.get('payload'):
                 payload = ' '.join(
                     ['%s=%s' % (key, value)
                      for d in event.get('payload')
                      for key, value in d.iteritems()])
-            except Exception:
-                pass
-        logger.info('Event "%s" received' % ' '.join(filter(None,
-                                                            [event['id'],
-                                                             event.get('cmd'),
-                                                             event.get('state'),
-                                                             payload])))
+        except:
+            pass
+        logger.debug('Event "%s" received' % ' '.join(filter(None,
+                                                             [event['id'],
+                                                              event.get('cmd'),
+                                                              event.get('state'),
+                                                              payload])))
