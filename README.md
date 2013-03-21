@@ -5,6 +5,7 @@ yadtcontroller [![Build Status](https://travis-ci.org/yadt/yadtcontroller.png?br
 
 ## Developer setup
 This module uses the [pybuilder](http://pybuilder.github.com).
+You will need ```virtualenv``` installed. (On Ubuntu : ```sudo apt-get install python-virtualenv```, on other machines ```sudo pip install virtualenv``` should do it).
 ```bash
 git clone https://github.com/yadt/yadtcontroller
 cd yadtcontroller
