@@ -16,7 +16,7 @@
 
 import unittest
 from mockito import mock, verify
-from yadt_controller.terminal import ProgressMessageHandler, TeamCityProgressMessageHandler
+from yadt_controller.terminal import TeamCityProgressMessageHandler
 
 
 class TeamcityMessageTest(unittest.TestCase):
@@ -28,4 +28,4 @@ class TeamcityMessageTest(unittest.TestCase):
 
         progress_handler.output_progress(mock_stream, 'service foo is now up')
 
-        verify(mock_stream).write("##teamcity[progressMessage 'service foo is now up']")
+        verify(mock_stream).write("##teamcity[progressMessage 'service foo is now up']\n")

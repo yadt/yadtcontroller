@@ -118,8 +118,6 @@ class YadtControllerTests(unittest.TestCase):
 
     def test_should_initialize_for_command_execution_with_tracking_id_when_command_execution_option_was_given(self):
         when(yadt_controller).generate_tracking_id(any_value()).thenReturn('test')
-        mock_progress_handler = mock()
-        when(yadt_controller).ProgressMessageHandler().thenReturn(mock_progress_handler)
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
                                                                                    '--broadcaster-host': None,
                                                                                    '<target>': 'target',
@@ -138,7 +136,7 @@ class YadtControllerTests(unittest.TestCase):
                                                                                     'baz',
                                                                                     '--tracking-id=test'],
                                                                          tracking_id='test',
-                                                                         progress_handler=mock_progress_handler)
+                                                                         progress_handler=None)
 
     def test_should_use_teamcity_progress_handler_if_options_was_given(self):
         when(yadt_controller).generate_tracking_id(any_value()).thenReturn('test')

@@ -15,6 +15,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+import sys
 from yadtbroadcastclient import WampBroadcaster
 from mockito import when, verify, unstub, any as any_value, mock, never
 import yadt_controller.configuration
@@ -373,3 +374,19 @@ class EventHandlerTests(unittest.TestCase):
         event_handler.on_command_execution_event('target', event)
 
         verify(mock_state_machine, never).test_state(msg='cmd')
+
+    def test_output_service_change_should_call_progress_handler(self):
+        event_handler = EventHandler('hostname', 12345, 'target')
+        mock_progress_handler = mock()
+        event_handler.progress_handler = mock_progress_handler
+
+        event = {'id': 'service-change',
+                       'type': 'event',
+                       'tracking_id': 'test',
+                       'payload': [{
+                           'state': 'up',
+                           'uri': 'service://host/service'}]}
+
+        event_handler._output_service_change(event)
+
+        verify(mock_progress_handler).output_progress(sys.stdout,'service://host/service is now up.')

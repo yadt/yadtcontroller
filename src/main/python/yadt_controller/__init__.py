@@ -58,7 +58,7 @@ from docopt import docopt, parse_defaults
 from configuration import BROADCASTER_HOST_KEY, BROADCASTER_PORT_KEY, TARGET_KEY, load
 from yadt_controller.event_handler import EventHandler
 from yadt_controller.tracking import generate_tracking_id
-from yadt_controller.terminal import TeamCityProgressMessageHandler, ProgressMessageHandler
+from yadt_controller.terminal import TeamCityProgressMessageHandler
 
 
 def run():
@@ -73,7 +73,7 @@ def run():
 
     event_handler = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
 
-    progress_handler = ProgressMessageHandler()
+    progress_handler = None
     if parsed_options.get('--teamcity'):
         progress_handler = TeamCityProgressMessageHandler()
 

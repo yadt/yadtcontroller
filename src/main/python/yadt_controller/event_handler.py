@@ -57,6 +57,7 @@ class EventHandler(object):
                                          arguments=None,
                                          tracking_id=None,
                                          progress_handler=None):
+        self.progress_handler = progress_handler
         self.tracking_id = tracking_id
         self.waiting_timeout = waiting_timeout
         self.pending_timeout = pending_timeout
@@ -145,7 +146,10 @@ class EventHandler(object):
     def _output_service_change(self, event):
         if event.get('id') == 'service-change' and event.get('payload'):
             for service_change in event.get('payload'):
-                logger.info('{0} is now {1}.'.format(service_change.get('uri'), service_change.get('state')))
+                message = '{0} is now {1}.'.format(service_change.get('uri'), service_change.get('state'))
+                logger.info(message)
+                if self.progress_handler is not None:
+                    self.progress_handler.output_progress(sys.stdout, message)
 
     def _output_error_report(self, event):
         if self._event_is_an_error_report(event):

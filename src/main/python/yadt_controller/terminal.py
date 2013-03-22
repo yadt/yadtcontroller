@@ -15,13 +15,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class ProgressMessageHandler(object):
-
-    def output_progress(self, stream, message):  # pragma: no cover
-        pass
-
-
-class TeamCityProgressMessageHandler(ProgressMessageHandler):
+class TeamCityProgressMessageHandler(object):
 
     def output_progress(self, stream, message):
-        stream.write("##teamcity[progressMessage 'service foo is now up']".format(message))
+        stream.write("##teamcity[progressMessage '{0}']\n".format(message))
