@@ -55,7 +55,8 @@ class EventHandler(object):
                                          pending_timeout=None,
                                          command_to_execute=None,
                                          arguments=None,
-                                         tracking_id=None):
+                                         tracking_id=None,
+                                         progress_handler=None):
         self.tracking_id = tracking_id
         self.waiting_timeout = waiting_timeout
         self.pending_timeout = pending_timeout

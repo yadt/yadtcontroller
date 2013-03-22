@@ -118,6 +118,8 @@ class YadtControllerTests(unittest.TestCase):
 
     def test_should_initialize_for_command_execution_with_tracking_id_when_command_execution_option_was_given(self):
         when(yadt_controller).generate_tracking_id(any_value()).thenReturn('test')
+        mock_progress_handler = mock()
+        when(yadt_controller).ProgressMessageHandler().thenReturn(mock_progress_handler)
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
                                                                                    '--broadcaster-host': None,
                                                                                    '<target>': 'target',
@@ -126,7 +128,8 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    '<pending_timeout>': '3',
                                                                                    'info': False,
                                                                                    '<cmd>': 'foo',
-                                                                                   '<args>': ['bar', 'baz']})
+                                                                                   '<args>': ['bar', 'baz'],
+                                                                                   '--teamcity': False})
         yadt_controller.run()
 
         verify(self.event_handler_mock).initialize_for_execution_request(waiting_timeout=2, pending_timeout=3,
@@ -134,7 +137,32 @@ class YadtControllerTests(unittest.TestCase):
                                                                          arguments=['bar',
                                                                                     'baz',
                                                                                     '--tracking-id=test'],
-                                                                         tracking_id='test')
+                                                                         tracking_id='test',
+                                                                         progress_handler=mock_progress_handler)
+
+    def test_should_use_teamcity_progress_handler_if_options_was_given(self):
+        when(yadt_controller).generate_tracking_id(any_value()).thenReturn('test')
+        mock_teamcity_progress_handler = mock()
+        when(yadt_controller).TeamCityProgressMessageHandler().thenReturn(mock_teamcity_progress_handler)
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
+                                                                                   '--broadcaster-host': None,
+                                                                                   '<target>': 'target',
+                                                                                   '--broadcaster-port': '1234',
+                                                                                   '<waiting_timeout>': '2',
+                                                                                   '<pending_timeout>': '3',
+                                                                                   'info': False,
+                                                                                   '<cmd>': 'foo',
+                                                                                   '<args>': ['bar', 'baz'],
+                                                                                   '--teamcity': True})
+        yadt_controller.run()
+
+        verify(self.event_handler_mock).initialize_for_execution_request(waiting_timeout=2, pending_timeout=3,
+                                                                         command_to_execute='foo',
+                                                                         arguments=['bar',
+                                                                                    'baz',
+                                                                                    '--tracking-id=test'],
+                                                                         tracking_id='test',
+                                                                         progress_handler=mock_teamcity_progress_handler)
 
     def test_should_not_initialize_for_info_when_info_option_was_not_given(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',

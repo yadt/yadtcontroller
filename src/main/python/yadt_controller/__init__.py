@@ -30,6 +30,7 @@ Options:
 --version     Show version.
 -v --verbose  Spit out a lot of information.
 -q --quiet    Be especially quiet (overrides the verbose flag).
+--teamcity    Use TeamCity progress messages.
 -b <host> --broadcaster-host=<host>   Override broadcaster host to use for publishing [default: localhost].
 -p <port> --broadcaster-port=<port>   Override broadcaster port to use for publishing [default: 8081].
 --config-file=<config_file> Load configuration from this file                         [default:\
@@ -57,6 +58,7 @@ from docopt import docopt, parse_defaults
 from configuration import BROADCASTER_HOST_KEY, BROADCASTER_PORT_KEY, TARGET_KEY, load
 from yadt_controller.event_handler import EventHandler
 from yadt_controller.tracking import generate_tracking_id
+from yadt_controller.terminal import TeamCityProgressMessageHandler, ProgressMessageHandler
 
 
 def run():
@@ -70,6 +72,10 @@ def run():
     config = _determine_configuration()
 
     event_handler = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
+
+    progress_handler = ProgressMessageHandler()
+    if parsed_options.get('--teamcity'):
+        progress_handler = TeamCityProgressMessageHandler()
 
     logger = getLogger('yadt_controller')
 
@@ -99,7 +105,8 @@ def run():
                                                        pending_timeout=pending_timeout,
                                                        command_to_execute=command_to_execute,
                                                        arguments=arguments,
-                                                       tracking_id=tracking_id)
+                                                       tracking_id=tracking_id,
+                                                       progress_handler=progress_handler)
 
 
 def _determine_configuration():
