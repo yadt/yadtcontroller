@@ -123,10 +123,14 @@ class EventHandler(object):
             logger.error('The command failed.')
 
     def on_command_execution_success(self, event):
+        if self.progress_handler:
+            self.progress_handler.output_progress(sys.stdout, '{0} successful'.format(self.arguments[0]))
         self.exit_code = 0
         reactor.stop()
 
     def on_command_execution_failure(self, event):
+        if self.progress_handler:
+            self.progress_handler.output_progress(sys.stdout, '{0} failed'.format(self.arguments[0]))
         logger.debug('Waiting for possible error reports from a receiver..')
         self.exit_code = 1
         reactor.callLater(10, reactor.stop)

@@ -213,6 +213,7 @@ class EventHandlerTests(unittest.TestCase):
     def test_should_stop_reactor_and_set_exit_code_when_command_execution_was_sucessful(self):
         when(yadt_controller.event_handler.reactor).stop().thenReturn(None)
         event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.progress_handler = None
 
         event_handler.on_command_execution_success(mock())
 
@@ -223,6 +224,7 @@ class EventHandlerTests(unittest.TestCase):
         when(yadt_controller.event_handler.reactor).stop().thenReturn(None)
         when(yadt_controller.event_handler.logger).error(any_value()).thenReturn(None)
         event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.progress_handler = None
 
         event_handler.on_command_execution_failure(mock())
 
@@ -255,6 +257,29 @@ class EventHandlerTests(unittest.TestCase):
 
         event_handler.on_pending_command_execution(mock())
         verify(mock_progress_handler).output_progress(sys.stdout, 'update started')
+
+    def test_on_command_execution_failure_should_report_progress(self):
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.initialize_for_execution_request(pending_timeout=5, arguments=['update','foo'])
+        event_handler.on_pending_command_execution(mock())
+        mock_progress_handler = mock()
+        event_handler.progress_handler = mock_progress_handler
+        when(mock_progress_handler).output_progress(any_value(), any_value()).thenReturn(None)
+
+        event_handler.on_command_execution_failure(mock())
+        verify(mock_progress_handler).output_progress(sys.stdout, 'update failed')
+
+    def test_on_command_execution_success_should_report_progress(self):
+        when(yadt_controller.event_handler.reactor).stop().thenReturn(None)
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.initialize_for_execution_request(pending_timeout=5, arguments=['update','foo'])
+        event_handler.on_pending_command_execution(mock())
+        mock_progress_handler = mock()
+        event_handler.progress_handler = mock_progress_handler
+        when(mock_progress_handler).output_progress(any_value(), any_value()).thenReturn(None)
+
+        event_handler.on_command_execution_success(mock())
+        verify(mock_progress_handler).output_progress(sys.stdout, 'update successful')
 
 
     def test_on_failed_command_execution_should_ignore_failures_if_command_has_not_started_yet(self):
