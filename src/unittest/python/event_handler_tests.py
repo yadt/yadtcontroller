@@ -245,6 +245,18 @@ class EventHandlerTests(unittest.TestCase):
         verify(yadt_controller.event_handler.reactor).callLater(5,
                                                                 event_handler.execution_state_machine.pending_timeout)
 
+    def test_on_pending_command_execution_should_report_progress(self):
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.initialize_for_execution_request(pending_timeout=5, arguments=['update','foo'])
+        event_handler.on_pending_command_execution(mock())
+        mock_progress_handler = mock()
+        event_handler.progress_handler = mock_progress_handler
+        when(mock_progress_handler).output_progress(any_value(), any_value()).thenReturn(None)
+
+        event_handler.on_pending_command_execution(mock())
+        verify(mock_progress_handler).output_progress(sys.stdout, 'update started')
+
+
     def test_on_failed_command_execution_should_ignore_failures_if_command_has_not_started_yet(self):
         event_handler = EventHandler('hostname', 12345, 'target')
         event_handler.initialize_for_execution_request()

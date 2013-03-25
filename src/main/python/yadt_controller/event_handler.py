@@ -112,6 +112,8 @@ class EventHandler(object):
         reactor.callLater(self.waiting_timeout, self.execution_state_machine.waiting_timeout)
 
     def on_pending_command_execution(self, event):
+        if self.progress_handler:
+            self.progress_handler.output_progress(sys.stdout, '{0} started'.format(self.arguments[0]))
         reactor.callLater(self.pending_timeout, self.execution_state_machine.pending_timeout)
 
     def on_failed_command_execution(self, event):
