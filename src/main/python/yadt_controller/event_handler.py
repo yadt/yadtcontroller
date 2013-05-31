@@ -76,6 +76,7 @@ class EventHandler(object):
                                                           self.on_execution_pending_timeout)
         self.wamp_broadcaster.onEvent = self.on_command_execution_event
         self.wamp_broadcaster.addOnSessionOpenHandler(self.publish_execution_request)
+        reactor.callLater(self.waiting_timeout, self.execution_state_machine.waiting_timeout)
         reactor.callWhenRunning(self.wamp_broadcaster.connect)
         reactor.run()
         sys.exit(self.exit_code)
@@ -109,7 +110,7 @@ class EventHandler(object):
             pass
 
     def on_waiting_command_execution(self, event):
-        reactor.callLater(self.waiting_timeout, self.execution_state_machine.waiting_timeout)
+        pass
 
     def on_pending_command_execution(self, event):
         if self.progress_handler:
