@@ -150,7 +150,7 @@ class EventHandler(object):
         self.wamp_broadcaster.publish_request_for_target(self.target, self.command_to_execute, self.arguments)
 
     def on_execution_waiting_timeout(self, event):
-        logger.error('Timed out waiting for the command execution to start.')
+        logger.error('Did not get any response from a yadt receiver.')
 
     def on_execution_pending_timeout(self, event):
         logger.error('Execution started and pending, but timed out while waiting for it to complete.')

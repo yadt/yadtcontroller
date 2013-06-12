@@ -179,7 +179,7 @@ class EventHandlerTests(unittest.TestCase):
 
         event_handler.on_execution_waiting_timeout(mock())
 
-        verify(yadt_controller.event_handler.logger).error('Timed out waiting for the command execution to start.')
+        verify(yadt_controller.event_handler.logger).error('Did not get any response from a yadt receiver.')
 
     def test_should_log_error_when_pending_execution_request_times_out(self):
         event_handler = EventHandler('host', 8081, 'target')
