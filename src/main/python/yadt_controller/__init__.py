@@ -17,7 +17,9 @@
 """
 yadtcontroller
 
-Either obtain information from a YADT broadcaster, or have a remote YADT receiver execute a command.
+The yadtcontroller application is connects to a YADT broadcaster and
+issue orders to connected YADT receivers through the broadcaster, or retrieves
+information from the broadcaster directly.
 
 Usage:
 yadtcontroller [options] <target> <waiting_timeout> <pending_timeout> [--] <cmd> <args>...

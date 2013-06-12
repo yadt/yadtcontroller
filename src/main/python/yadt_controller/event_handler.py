@@ -14,6 +14,14 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+        The event handler dispatches the events received from a YADT broadcaster
+        and reacts accordingly. The protocol behaviour is dictated by an internal
+        state machine.
+        See https://raw.github.com/yadt/yadtreceiver/master/bigpicture.png for
+        a big picture.
+"""
+
 from yadtbroadcastclient import WampBroadcaster
 from twisted.internet import reactor
 import logging

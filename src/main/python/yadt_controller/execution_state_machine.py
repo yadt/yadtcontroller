@@ -13,7 +13,11 @@
 #
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+"""
+        The state machine that describes the protocol followed by the YADT
+        controller. The events received from a YADT broadcaster alter the initial
+        state until it is finished or errored.
+"""
 from fysom import Fysom
 
 
