@@ -151,11 +151,11 @@ class EventHandler(object):
 
     def on_execution_waiting_timeout(self, event):
         logger.error('Did not get any response from a yadt receiver - '
-                     'the command "{0}" was not started'.format(self.command_to_execute))
+                     'the command "{0} {1}" was not started'.format(self.command_to_execute, ' '.join(self.arguments)))
 
     def on_execution_pending_timeout(self, event):
-        logger.error('Execution of "{0}" started and pending, but timed out '
-                     'while waiting for it to complete.'.format(self.command_to_execute))
+        logger.error('Execution of "{0} {1}" started and pending, but timed out '
+                     'while waiting for it to complete.'.format(self.command_to_execute, ' '.join(self.arguments)))
 
     def _prepare_broadcast_client(self):
         self.wamp_broadcaster = WampBroadcaster(self.host, self.port, self.target)

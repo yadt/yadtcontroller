@@ -175,23 +175,25 @@ class EventHandlerTests(unittest.TestCase):
     def test_should_log_error_when_waiting_execution_request_times_out(self):
         event_handler = EventHandler('host', 8081, 'target')
         event_handler.command_to_execute = '/usr/bin/true'
+        event_handler.arguments = ['foo', 'bar']
         when(yadt_controller.event_handler.reactor).stop().thenReturn(None)
         when(yadt_controller.event_handler.logger).error(any_value()).thenReturn(None)
 
         event_handler.on_execution_waiting_timeout(mock())
 
         verify(yadt_controller.event_handler.logger).error('Did not get any response from a yadt receiver - '
-                                                           'the command "/usr/bin/true" was not started')
+                                                           'the command "/usr/bin/true foo bar" was not started')
 
     def test_should_log_error_when_pending_execution_request_times_out(self):
         event_handler = EventHandler('host', 8081, 'target')
         event_handler.command_to_execute = '/usr/bin/true'
+        event_handler.arguments = ['foo', 'bar']
         when(yadt_controller.event_handler.reactor).stop().thenReturn(None)
         when(yadt_controller.event_handler.logger).error(any_value()).thenReturn(None)
 
         event_handler.on_execution_pending_timeout(mock())
 
-        verify(yadt_controller.event_handler.logger).error('Execution of "/usr/bin/true" started and pending, '
+        verify(yadt_controller.event_handler.logger).error('Execution of "/usr/bin/true foo bar" started and pending, '
                                                            'but timed out while waiting for it to complete.')
 
     def test_publish_execution_request_should_trigger_request_event_on_state_machine(self):
