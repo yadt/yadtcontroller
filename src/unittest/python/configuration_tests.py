@@ -47,10 +47,12 @@ class ControllerConfigLoaderTests (unittest.TestCase):
         mock_parser.get_option.return_value = 'broadcaster.host'
         mock_loader._parser = mock_parser
 
-        actual_broadcaster_host = ControllerConfigLoader.get_broadcaster_host(mock_loader)
+        actual_broadcaster_host = ControllerConfigLoader.get_broadcaster_host(
+            mock_loader)
 
         self.assertEqual('broadcaster.host', actual_broadcaster_host)
-        self.assertEqual(call(SECTION_BROADCASTER, 'host', mock_loader.DEFAULT_BROADCASTER_HOST), mock_parser.get_option.call_args)
+        self.assertEqual(
+            call(SECTION_BROADCASTER, 'host', mock_loader.DEFAULT_BROADCASTER_HOST), mock_parser.get_option.call_args)
 
     def test_should_return_broadcaster_port_option(self):
         mock_loader = Mock(ControllerConfigLoader)
@@ -58,10 +60,12 @@ class ControllerConfigLoaderTests (unittest.TestCase):
         mock_parser.get_option_as_int.return_value = 8081
         mock_loader._parser = mock_parser
 
-        actual_broadcaster_port = ControllerConfigLoader.get_broadcaster_port(mock_loader)
+        actual_broadcaster_port = ControllerConfigLoader.get_broadcaster_port(
+            mock_loader)
 
         self.assertEqual(8081, actual_broadcaster_port)
-        self.assertEqual(call(SECTION_BROADCASTER, 'port', mock_loader.DEFAULT_BROADCASTER_PORT), mock_parser.get_option_as_int.call_args)
+        self.assertEqual(
+            call(SECTION_BROADCASTER, 'port', mock_loader.DEFAULT_BROADCASTER_PORT), mock_parser.get_option_as_int.call_args)
 
     def test_should_delegate_read_configuration_file(self):
         mock_loader = Mock(ControllerConfigLoader)
@@ -69,13 +73,16 @@ class ControllerConfigLoaderTests (unittest.TestCase):
         mock_parser.read_configuration_file.return_value = {'spam': 'eggs'}
         mock_loader._parser = mock_parser
 
-        actual_configuration = ControllerConfigLoader.read_configuration_file(mock_loader, 'filename.cfg')
+        actual_configuration = ControllerConfigLoader.read_configuration_file(
+            mock_loader, 'filename.cfg')
 
         self.assertEqual({'spam': 'eggs'}, actual_configuration)
-        self.assertEqual(call('filename.cfg'), mock_parser.read_configuration_file.call_args)
+        self.assertEqual(
+            call('filename.cfg'), mock_parser.read_configuration_file.call_args)
 
 
 class LoadTest (unittest.TestCase):
+
     @patch('yadt_controller.configuration.ControllerConfigLoader')
     def test_should_load_configuration_from_file(self, mock_loader_class):
         mock_loader = Mock(ControllerConfigLoader)
@@ -83,7 +90,8 @@ class LoadTest (unittest.TestCase):
 
         load('abc')
 
-        self.assertEqual(call('abc'), mock_loader.read_configuration_file.call_args)
+        self.assertEqual(
+            call('abc'), mock_loader.read_configuration_file.call_args)
 
     @patch('yadt_controller.configuration.ControllerConfigLoader')
     def test_should_load_defaults(self, mock_loader):
@@ -97,7 +105,8 @@ class LoadTest (unittest.TestCase):
     @patch('yadt_controller.configuration.ControllerConfigLoader')
     def test_should_ignore_configuration_exception(self, mock_loader_class, mock_logger):
         mock_loader = Mock(ControllerConfigLoader)
-        mock_loader.read_configuration_file.side_effect = ConfigurationException('bla')
+        mock_loader.read_configuration_file.side_effect = ConfigurationException(
+            'bla')
         mock_loader_class.return_value = mock_loader
 
         load('/foo/bar')
@@ -112,11 +121,11 @@ class LoadTest (unittest.TestCase):
         actual_configuration = load('abc')
 
         self.assertEqual(call(), mock_loader.get_broadcaster_host.call_args)
-        self.assertEqual('broadcaster host', actual_configuration['broadcaster-host'])
+        self.assertEqual(
+            'broadcaster host', actual_configuration['broadcaster-host'])
 
         self.assertEqual(call(), mock_loader.get_broadcaster_port.call_args)
         self.assertEqual(12345, actual_configuration['broadcaster-port'])
-
 
     @patch('yadt_controller.configuration.ControllerConfigLoader')
     def test_should_get_receiver_properties_from_parser(self, mock_loader_class):
@@ -128,7 +137,8 @@ class LoadTest (unittest.TestCase):
         actual_configuration = load('abc')
 
         self.assertEqual(call(), mock_loader.get_broadcaster_host.call_args)
-        self.assertEqual('broadcaster host name', actual_configuration['broadcaster-host'])
+        self.assertEqual('broadcaster host name',
+                         actual_configuration['broadcaster-host'])
 
         self.assertEqual(call(), mock_loader.get_broadcaster_port.call_args)
         self.assertEqual(12345, actual_configuration['broadcaster-port'])

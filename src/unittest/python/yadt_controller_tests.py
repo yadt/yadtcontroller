@@ -34,7 +34,7 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    '--broadcaster-host': 'host',
                                                                                    '--broadcaster-port': '54321'})
         when(yadt_controller).load(any_value(), any_value()).thenReturn({'broadcaster-host': 'localhost',
-                                                                                'broadcaster-port': 12345})
+                                                                         'broadcaster-port': 12345})
         self.event_handler_mock = mock(EventHandler)
         when(yadt_controller).EventHandler(any_value(), any_value(), any_value()).thenReturn(self.event_handler_mock)
 

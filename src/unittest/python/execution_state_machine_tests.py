@@ -42,13 +42,14 @@ class ExecutionStateMachineTests(unittest.TestCase):
         pass
 
     def test_should_create_state_machine_with_callbacks(self):
-        fsm = create_execution_state_machine_with_callbacks(waiting_callback=self.waiting_callback,
-                                                            failed_callback=self.failed_callback,
-                                                            pending_callback=self.pending_callback,
-                                                            success_callback=self.success_callback,
-                                                            failure_callback=self.failure_callback,
-                                                            waiting_timeout_callback=self.waiting_timeout_callback,
-                                                            pending_timeout_callback=self.pending_timeout_callback)
+        fsm = create_execution_state_machine_with_callbacks(
+            waiting_callback=self.waiting_callback,
+            failed_callback=self.failed_callback,
+            pending_callback=self.pending_callback,
+            success_callback=self.success_callback,
+            failure_callback=self.failure_callback,
+            waiting_timeout_callback=self.waiting_timeout_callback,
+            pending_timeout_callback=self.pending_timeout_callback)
 
         self.assertEqual(fsm.onwaiting, self.waiting_callback)
         self.assertEqual(fsm.onfailed, self.failed_callback)
@@ -57,12 +58,13 @@ class ExecutionStateMachineTests(unittest.TestCase):
         self.assertEqual(fsm.onfailure, self.failure_callback)
 
     def test_state_machine_should_be_in_idle_state_initially(self):
-        fsm = create_execution_state_machine_with_callbacks(waiting_callback=self.waiting_callback,
-                                                            failed_callback=self.failed_callback,
-                                                            pending_callback=self.pending_callback,
-                                                            success_callback=self.success_callback,
-                                                            failure_callback=self.failure_callback,
-                                                            waiting_timeout_callback=self.waiting_timeout_callback,
-                                                            pending_timeout_callback=self.pending_timeout_callback)
+        fsm = create_execution_state_machine_with_callbacks(
+            waiting_callback=self.waiting_callback,
+            failed_callback=self.failed_callback,
+            pending_callback=self.pending_callback,
+            success_callback=self.success_callback,
+            failure_callback=self.failure_callback,
+            waiting_timeout_callback=self.waiting_timeout_callback,
+            pending_timeout_callback=self.pending_timeout_callback)
 
         self.assertEqual(fsm.current, 'idle')

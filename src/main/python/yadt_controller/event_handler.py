@@ -175,7 +175,7 @@ class EventHandler(object):
                 logger.error(error_message_line)
 
     def _event_is_an_error_report(self, event):
-        return event.get('id') == 'cmd' and event.get('state') and event.get('message')
+        return event.get('id') == 'cmd' and event.get('state') == 'failed' and event.get('message')
 
     def _apply_state_transition_to_state_machine(self, event):
         if event.get('state'):
