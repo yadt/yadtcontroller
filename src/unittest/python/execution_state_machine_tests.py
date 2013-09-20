@@ -68,3 +68,10 @@ class ExecutionStateMachineTests(unittest.TestCase):
             pending_timeout_callback=self.pending_timeout_callback)
 
         self.assertEqual(fsm.current, 'idle')
+
+    def test_should_not_fail_with_stacktrace_when_request_publishing_takes_too_long(self):
+        id = lambda x: x
+        fsm = create_execution_state_machine_with_callbacks(id, id, id, id, id, id, id)
+        fsm.waiting_timeout()
+        fsm.request()
+        self.assertEqual(fsm.current, 'failure')
