@@ -13,11 +13,12 @@
 #
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+from __future__ import print_function
 import unittest
 import sys
 from yadtbroadcastclient import WampBroadcaster
 from mockito import when, verify, unstub, any as any_value, mock, never
+from mock import patch
 import yadt_controller.configuration
 from yadt_controller.event_handler import EventHandler
 
@@ -167,7 +168,8 @@ class EventHandlerTests(unittest.TestCase):
         verify(yadt_controller.event_handler.reactor).callLater(
             10, event_handler.on_info_timeout, 10)
 
-    def test_oninfo_should_stop_reactor(self):
+    @patch('__builtin__.print')
+    def test_oninfo_should_stop_reactor(self, _):
         when(yadt_controller.event_handler.reactor).stop().thenReturn(None)
         when(yadt_controller.event_handler.reactor).callWhenRunning(
             any_value()).thenReturn(None)

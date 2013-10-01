@@ -22,6 +22,7 @@
         a big picture.
 """
 
+from __future__ import print_function
 from yadtbroadcastclient import WampBroadcaster
 from twisted.internet import reactor
 import logging
@@ -95,7 +96,9 @@ class EventHandler(object):
         reactor.stop()
 
     def on_info(self, target, info_event):
-        logger.info(info_event)
+        import json
+        info_json = json.dumps(info_event)
+        print(info_json)
         self.exit_code = 0
         reactor.stop()
 
