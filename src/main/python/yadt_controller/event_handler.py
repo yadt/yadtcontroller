@@ -41,7 +41,8 @@ class EventHandler(object):
             raise ValueError(error_message)
 
         if port > 65535:
-            error_message = 'port {0} out of range, use port between 0 and 65535'.format(port)
+            error_message = 'port {0} out of range, use port between 0 and 65535'.format(
+                port)
             raise ValueError(error_message)
 
     def __init__(self, host, port, target):
@@ -76,22 +77,26 @@ class EventHandler(object):
         self._prepare_broadcast_client()
 
         self.execution_state_machine = \
-            create_execution_state_machine_with_callbacks(self.on_waiting_command_execution,
-                                                          self.on_failed_command_execution,
-                                                          self.on_pending_command_execution,
-                                                          self.on_command_execution_success,
-                                                          self.on_command_execution_failure,
-                                                          self.on_execution_waiting_timeout,
-                                                          self.on_execution_pending_timeout)
+            create_execution_state_machine_with_callbacks(
+                self.on_waiting_command_execution,
+                self.on_failed_command_execution,
+                self.on_pending_command_execution,
+                self.on_command_execution_success,
+                self.on_command_execution_failure,
+                self.on_execution_waiting_timeout,
+                self.on_execution_pending_timeout)
         self.wamp_broadcaster.onEvent = self.on_command_execution_event
-        self.wamp_broadcaster.addOnSessionOpenHandler(self.publish_execution_request)
-        reactor.callLater(self.waiting_timeout, self.execution_state_machine.waiting_timeout)
+        self.wamp_broadcaster.addOnSessionOpenHandler(
+            self.publish_execution_request)
+        reactor.callLater(
+            self.waiting_timeout, self.execution_state_machine.waiting_timeout)
         reactor.callWhenRunning(self.wamp_broadcaster.connect)
         reactor.run()
         sys.exit(self.exit_code)
 
     def on_info_timeout(self, timeout):
-        logger.error('Timed out after %s seconds waiting for an info event.' % str(timeout))
+        logger.error(
+            'Timed out after %s seconds waiting for an info event.' % str(timeout))
         self.exit_code = 1
         reactor.stop()
 
@@ -105,11 +110,13 @@ class EventHandler(object):
     def on_command_execution_event(self, target, event):
         if event.get('tracking_id') != self.tracking_id:
             if event.get('state'):
-                event_description = '{0} {1}'.format(event.get('id'), event.get('state'))
+                event_description = '{0} {1}'.format(
+                    event.get('id'), event.get('state'))
             else:
                 event_description = '{0}'.format(event.get('id'))
-            logger.debug('Ignoring event {0} with a foreign tracking ID: {1}.'.format(event_description,
-                                                                                      event.get('tracking_id')))
+            logger.debug(
+                'Ignoring event {0} with a foreign tracking ID: {1}.'.format(event_description,
+                                                                             event.get('tracking_id')))
             return
 
         try:
@@ -125,48 +132,58 @@ class EventHandler(object):
 
     def on_pending_command_execution(self, event):
         if self.progress_handler:
-            self.progress_handler.output_progress(sys.stdout, '{0} started'.format(self.arguments[0]))
-        reactor.callLater(self.pending_timeout, self.execution_state_machine.pending_timeout)
+            self.progress_handler.output_progress(
+                sys.stdout, '{0} started'.format(self.arguments[0]))
+        reactor.callLater(
+            self.pending_timeout, self.execution_state_machine.pending_timeout)
 
     def on_failed_command_execution(self, event):
         if event.src == 'waiting':
-            logger.warn('Command execution has not started yet, but got a failure event. Waiting for other receivers.')
+            logger.warn(
+                'Command execution has not started yet, but got a failure event. Waiting for other receivers.')
         else:
             logger.error('The command failed.')
 
     def on_command_execution_success(self, event):
         if self.progress_handler:
-            self.progress_handler.output_progress(sys.stdout, '{0} successful'.format(self.arguments[0]))
+            self.progress_handler.output_progress(
+                sys.stdout, '{0} successful'.format(self.arguments[0]))
         self.exit_code = 0
         reactor.stop()
 
     def on_command_execution_failure(self, event):
         if self.progress_handler:
-            self.progress_handler.output_progress(sys.stdout, '{0} failed'.format(self.arguments[0]))
+            self.progress_handler.output_progress(
+                sys.stdout, '{0} failed'.format(self.arguments[0]))
         logger.debug('Waiting for possible error reports from a receiver..')
         self.exit_code = 1
         reactor.callLater(10, reactor.stop)
 
     def publish_execution_request(self):
-        logger.debug('Publishing execution request : execute {0} on {1}'.format(self.command_to_execute, self.target))
-        self.execution_state_machine.request(message='Execute {0} on {1}.'.format(self.command_to_execute, self.target))
-        self.wamp_broadcaster.publish_request_for_target(self.target, self.command_to_execute, self.arguments)
+        logger.debug('Publishing execution request : execute {0} on {1}'.format(
+            self.command_to_execute, self.target))
+        self.execution_state_machine.request(
+            message='Execute {0} on {1}.'.format(self.command_to_execute, self.target))
+        self.wamp_broadcaster.publish_request_for_target(
+            self.target, self.command_to_execute, self.arguments)
 
     def on_execution_waiting_timeout(self, event):
         logger.error('Did not get any response from a yadt receiver - '
-                     'the command "{0} {1}" was not started'.format(self.command_to_execute, ' '.join(self.arguments)))
+                     'the command "{0} {1}" was not started within {2} seconds'.format(self.command_to_execute, ' '.join(self.arguments), self.waiting_timeout))
 
     def on_execution_pending_timeout(self, event):
-        logger.error('Execution of "{0} {1}" started and pending, but timed out '
-                     'while waiting for it to complete.'.format(self.command_to_execute, ' '.join(self.arguments)))
+        logger.error('Execution of "{0} {1}" started and pending, but timed out after {2} seconds '
+                     'while waiting for it to complete.'.format(self.command_to_execute, ' '.join(self.arguments), self.pending_timeout))
 
     def _prepare_broadcast_client(self):
-        self.wamp_broadcaster = WampBroadcaster(self.host, self.port, self.target)
+        self.wamp_broadcaster = WampBroadcaster(
+            self.host, self.port, self.target)
 
     def _output_service_change(self, event):
         if event.get('id') == 'service-change' and event.get('payload'):
             for service_change in event.get('payload'):
-                message = '{0} is now {1}.'.format(service_change.get('uri'), service_change.get('state'))
+                message = '{0} is now {1}.'.format(
+                    service_change.get('uri'), service_change.get('state'))
                 logger.info(message)
                 if self.progress_handler is not None:
                     self.progress_handler.output_progress(sys.stdout, message)
@@ -187,9 +204,10 @@ class EventHandler(object):
                 previous_fsm_state = self.execution_state_machine.current
                 fun(msg=event['id'])
                 current_fsm_state = self.execution_state_machine.current
-                logger.debug('Transition from "{0}" to "{1}" since event "{2}" occured.'.format(previous_fsm_state,
-                                                                                                current_fsm_state,
-                                                                                                event['state']))
+                logger.debug(
+                    'Transition from "{0}" to "{1}" since event "{2}" occured.'.format(previous_fsm_state,
+                                                                                       current_fsm_state,
+                                                                                       event['state']))
 
     def _pretty_print_event(self, event):
         payload = None
@@ -204,5 +222,6 @@ class EventHandler(object):
         logger.debug('Event "%s" received' % ' '.join(filter(None,
                                                              [event['id'],
                                                               event.get('cmd'),
-                                                              event.get('state'),
+                                                              event.get(
+                                                                  'state'),
                                                               payload])))
