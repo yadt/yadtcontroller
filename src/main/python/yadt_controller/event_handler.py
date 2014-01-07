@@ -122,6 +122,7 @@ class EventHandler(object):
         try:
             self._pretty_print_event(event)
             self._output_error_report(event)
+            self._output_error_info(event)
             self._output_service_change(event)
             self._apply_state_transition_to_state_machine(event)
         except:
@@ -169,11 +170,15 @@ class EventHandler(object):
 
     def on_execution_waiting_timeout(self, event):
         logger.error('Did not get any response from a yadt receiver - '
-                     'the command "{0} {1}" was not started within {2} seconds'.format(self.command_to_execute, ' '.join(self.arguments), self.waiting_timeout))
+                     'the command "{0} {1}" was not started within {2} seconds'.format(self.command_to_execute,
+                                                                                       ' '.join(self.arguments),
+                                                                                       self.waiting_timeout))
 
     def on_execution_pending_timeout(self, event):
         logger.error('Execution of "{0} {1}" started and pending, but timed out after {2} seconds '
-                     'while waiting for it to complete.'.format(self.command_to_execute, ' '.join(self.arguments), self.pending_timeout))
+                     'while waiting for it to complete.'.format(self.command_to_execute,
+                                                                ' '.join(self.arguments),
+                                                                self.pending_timeout))
 
     def _prepare_broadcast_client(self):
         self.wamp_broadcaster = WampBroadcaster(
@@ -196,6 +201,16 @@ class EventHandler(object):
 
     def _event_is_an_error_report(self, event):
         return event.get('id') == 'cmd' and event.get('state') == 'failed' and event.get('message')
+
+    def _output_error_info(self, event):
+        if self._event_is_an_error_info(event):
+            logger.error('*' * 5 + 'Error info' + '*' * 5)
+            logger.error(' Target: %s' % event.get('target'))
+            logger.error(' Host: %s' % event.get('host'))
+            logger.error(' Logfile: %s' % event.get('log_file'))
+
+    def _event_is_an_error_info(self, event):
+        return event.get('id') == 'error-info'
 
     def _apply_state_transition_to_state_machine(self, event):
         if event.get('state'):

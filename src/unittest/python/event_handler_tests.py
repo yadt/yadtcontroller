@@ -17,8 +17,8 @@ from __future__ import print_function
 import unittest
 import sys
 from yadtbroadcastclient import WampBroadcaster
+from mock import patch, call
 from mockito import when, verify, unstub, any as any_value, mock, never
-from mock import patch
 import yadt_controller.configuration
 from yadt_controller.event_handler import EventHandler
 
@@ -59,6 +59,37 @@ class ErrorReportTests(unittest.TestCase):
                                       }
         self.assertFalse(
             event_handler._event_is_an_error_report(failure_event_with_message))
+
+
+class ErrorInfoTests(unittest.TestCase):
+
+    def test_should_not_mark_other_events_as_error_info(self):
+        event_handler = EventHandler('host', 8081, 'target')
+        success_event = {'id': 'cmd'}
+        self.assertFalse(
+            event_handler._event_is_an_error_info(success_event))
+
+    def test_should_mark_error_info_as_error_info(self):
+        event_handler = EventHandler('host', 8081, 'target')
+        error_info = {'id': 'error-info'}
+        self.assertTrue(
+            event_handler._event_is_an_error_info(error_info))
+
+    @patch('yadt_controller.event_handler.logger', create=True)
+    def test_should_output_error_info(self, logger):
+        event_handler = EventHandler('host', 8081, 'target')
+        error_info = {'id': 'error-info', 'target': 'target',
+                      'host': 'some-machine', 'log_file': '/path/to/logfile'}
+
+        event_handler._output_error_info(error_info)
+
+        self.assertEqual(logger.error.call_args_list,
+                         [
+                             call('*****Error info*****'),
+                             call(' Target: target'),
+                             call(' Host: some-machine'),
+                             call(' Logfile: /path/to/logfile')
+                         ])
 
 
 class EventHandlerTests(unittest.TestCase):
