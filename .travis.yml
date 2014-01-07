@@ -5,6 +5,7 @@ python:
   - "pypy"
 
 install:
+  - pip install --upgrade setuptools
   - pip install pybuilder
   - pyb install_dependencies
 
