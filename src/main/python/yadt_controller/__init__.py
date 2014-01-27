@@ -53,6 +53,8 @@ COMMAND_ARGUMENT = '<cmd>'
 ARGUMENT_ARGUMENT = '<args>'
 INFO_COMMAND = 'info'
 
+MINIMAL_WAITING_TIMEOUT = 30
+
 
 from logging import basicConfig, INFO, DEBUG, WARN, getLogger
 from docopt import docopt, parse_defaults
@@ -73,7 +75,8 @@ def run():
 
     config = _determine_configuration()
 
-    event_handler = EventHandler(config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
+    event_handler = EventHandler(
+        config[BROADCASTER_HOST_KEY], config[BROADCASTER_PORT_KEY], config[TARGET_KEY])
 
     progress_handler = None
     if parsed_options.get('--teamcity'):
@@ -84,16 +87,23 @@ def run():
     if parsed_options.get(INFO_COMMAND):
         waiting_timeout = int(parsed_options.get(WAITING_TIMEOUT_ARGUMENT))
         info_command_debug_message = 'Requesting info on target {0}. Will wait at most {1} second(s) for a reply.'
-        logger.debug(info_command_debug_message.format(event_handler.target, waiting_timeout))
+        logger.debug(info_command_debug_message.format(
+            event_handler.target, waiting_timeout))
         event_handler.initialize_for_info_request(timeout=waiting_timeout)
 
     if parsed_options.get(COMMAND_ARGUMENT):
         waiting_timeout = int(parsed_options[WAITING_TIMEOUT_ARGUMENT])
+        if waiting_timeout < MINIMAL_WAITING_TIMEOUT:
+            logger.warning(
+                'Given waiting timeout (%rs) is less than minimal allowed timeout (%rs), using the minimal timeout instead.' % (waiting_timeout,
+                                                                                                                      MINIMAL_WAITING_TIMEOUT))
+            waiting_timeout = MINIMAL_WAITING_TIMEOUT
         pending_timeout = int(parsed_options[PENDING_TIMEOUT_ARGUMENT])
         command_to_execute = parsed_options[COMMAND_ARGUMENT]
         arguments = parsed_options[ARGUMENT_ARGUMENT]
 
-        tracking_id = _add_generated_tracking_id_to_arguments(arguments, event_handler)
+        tracking_id = _add_generated_tracking_id_to_arguments(
+            arguments, event_handler)
 
         message = 'Requesting execution of {0} with arguments {1} on target {2}. Will wait {3} seconds for the ' \
                   'command to start, and {4} seconds for the command to complete.'
@@ -103,12 +113,13 @@ def run():
                                     waiting_timeout,
                                     pending_timeout))
 
-        event_handler.initialize_for_execution_request(waiting_timeout=waiting_timeout,
-                                                       pending_timeout=pending_timeout,
-                                                       command_to_execute=command_to_execute,
-                                                       arguments=arguments,
-                                                       tracking_id=tracking_id,
-                                                       progress_handler=progress_handler)
+        event_handler.initialize_for_execution_request(
+            waiting_timeout=waiting_timeout,
+            pending_timeout=pending_timeout,
+            command_to_execute=command_to_execute,
+            arguments=arguments,
+            tracking_id=tracking_id,
+            progress_handler=progress_handler)
 
 
 def _determine_configuration():

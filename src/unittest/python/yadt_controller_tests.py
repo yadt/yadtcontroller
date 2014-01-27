@@ -130,7 +130,7 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    '--teamcity': False})
         yadt_controller.run()
 
-        verify(self.event_handler_mock).initialize_for_execution_request(waiting_timeout=2, pending_timeout=3,
+        verify(self.event_handler_mock).initialize_for_execution_request(waiting_timeout=30, pending_timeout=3,
                                                                          command_to_execute='foo',
                                                                          arguments=['bar',
                                                                                     'baz',
@@ -154,7 +154,7 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    '--teamcity': True})
         yadt_controller.run()
 
-        verify(self.event_handler_mock).initialize_for_execution_request(waiting_timeout=2, pending_timeout=3,
+        verify(self.event_handler_mock).initialize_for_execution_request(waiting_timeout=30, pending_timeout=3,
                                                                          command_to_execute='foo',
                                                                          arguments=['bar',
                                                                                     'baz',
