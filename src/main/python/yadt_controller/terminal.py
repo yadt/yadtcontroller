@@ -19,3 +19,4 @@ class TeamCityProgressMessageHandler(object):
 
     def output_progress(self, stream, message):
         stream.write("##teamcity[progressMessage '{0}']\n".format(message))
+        stream.flush()
