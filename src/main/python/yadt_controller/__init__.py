@@ -66,7 +66,7 @@ from yadt_controller.terminal import TeamCityProgressMessageHandler
 
 
 def run():
-    basicConfig(format='[%(levelname)s] %(message)s')
+    basicConfig(format='%(asctime)s [%(levelname)7s] %(message)s')
     getLogger().setLevel(INFO)
 
     parsed_options = docopt(__doc__, version=__version__)
@@ -96,7 +96,7 @@ def run():
         if waiting_timeout < MINIMAL_WAITING_TIMEOUT:
             logger.warning(
                 'Given waiting timeout (%rs) is less than minimal allowed timeout (%rs), using the minimal timeout instead.' % (waiting_timeout,
-                                                                                                                      MINIMAL_WAITING_TIMEOUT))
+                                                                                                                                MINIMAL_WAITING_TIMEOUT))
             waiting_timeout = MINIMAL_WAITING_TIMEOUT
         pending_timeout = int(parsed_options[PENDING_TIMEOUT_ARGUMENT])
         command_to_execute = parsed_options[COMMAND_ARGUMENT]

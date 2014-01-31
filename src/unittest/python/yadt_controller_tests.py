@@ -44,7 +44,7 @@ class YadtControllerTests(unittest.TestCase):
     def test_should_initialize_logging(self):
         yadt_controller.run()
 
-        verify(yadt_controller).basicConfig(format='[%(levelname)s] %(message)s')
+        verify(yadt_controller).basicConfig(format='%(asctime)s [%(levelname)7s] %(message)s')
         verify(yadt_controller).getLogger()
         verify(self.mock_root_logger).setLevel(yadt_controller.INFO)
 
