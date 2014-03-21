@@ -61,3 +61,4 @@ def set_properties_for_teamcity(project):
     project.version = '%s-%s' % (project.version, os.environ.get('BUILD_NUMBER', 0))
     project.default_task = ['install_build_dependencies', 'package']
     project.get_property('distutils_commands').append('bdist_rpm')
+    project.set_property('teamcity_output', True)
