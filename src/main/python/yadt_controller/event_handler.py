@@ -204,10 +204,10 @@ class EventHandler(object):
 
     def _output_error_info(self, event):
         if self._event_is_an_error_info(event):
-            logger.error('*' * 5 + 'Error info' + '*' * 5)
-            logger.error(' Target: %s' % event.get('target'))
-            logger.error(' Host: %s' % event.get('host'))
-            logger.error(' Logfile: %s' % event.get('log_file'))
+            logger.info('*' * 5 + 'Error info' + '*' * 5)
+            logger.info(' Target: %s' % event.get('target'))
+            logger.info(' Host: %s' % event.get('host'))
+            logger.info(' Logfile: %s' % event.get('log_file'))
 
     def _event_is_an_error_info(self, event):
         return event.get('id') == 'error-info'

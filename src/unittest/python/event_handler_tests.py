@@ -83,7 +83,7 @@ class ErrorInfoTests(unittest.TestCase):
 
         event_handler._output_error_info(error_info)
 
-        self.assertEqual(logger.error.call_args_list,
+        self.assertEqual(logger.info.call_args_list,
                          [
                              call('*****Error info*****'),
                              call(' Target: target'),
