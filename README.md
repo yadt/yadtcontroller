@@ -16,7 +16,7 @@ pyb install_dependencies
 ```
 Or you could use [pyb_init](https://github.com/mriehl/pyb_init) and run
 ```bash
-pyb_init https://github.com/yadt/yadtcontroller
+pyb-init github yadt : yadtcontroller
 ```
 
 ## Running the tests
