@@ -61,34 +61,34 @@ class ErrorReportTests(unittest.TestCase):
             event_handler._event_is_an_error_report(failure_event_with_message))
 
 
-class ErrorInfoTests(unittest.TestCase):
+class CallInfoTests(unittest.TestCase):
 
-    def test_should_not_mark_other_events_as_error_info(self):
+    def test_should_not_mark_other_events_as_call_info(self):
         event_handler = EventHandler('host', 8081, 'target')
-        success_event = {'id': 'cmd'}
+        command_event = {'id': 'cmd'}
         self.assertFalse(
-            event_handler._event_is_an_error_info(success_event))
+            event_handler._event_is_a_call_info(command_event))
 
-    def test_should_mark_error_info_as_error_info(self):
+    def test_should_mark_call_info_as_call_info(self):
         event_handler = EventHandler('host', 8081, 'target')
-        error_info = {'id': 'error-info'}
+        call_info = {'id': 'call-info'}
         self.assertTrue(
-            event_handler._event_is_an_error_info(error_info))
+            event_handler._event_is_a_call_info(call_info))
 
     @patch('yadt_controller.event_handler.logger', create=True)
-    def test_should_output_error_info(self, logger):
+    def test_should_output_call_info(self, logger):
         event_handler = EventHandler('host', 8081, 'target')
-        error_info = {'id': 'error-info', 'target': 'target',
-                      'host': 'some-machine', 'log_file': '/path/to/logfile'}
+        call_info = {'id': 'call-info', 'target': 'target',
+                     'host': 'some-machine', 'log_file': '/path/to/logfile'}
 
-        event_handler._output_error_info(error_info)
+        event_handler._output_call_info(call_info)
 
         self.assertEqual(logger.info.call_args_list,
                          [
-                             call('*****Error info*****'),
-                             call(' Target: target'),
-                             call(' Host: some-machine'),
-                             call(' Logfile: /path/to/logfile')
+                             call('*****Yadtshell call info*****'),
+                             call(' Affected target: target'),
+                             call(' Host executing the command: some-machine'),
+                             call(' Logfile is at : /path/to/logfile')
                          ])
 
 
@@ -511,11 +511,11 @@ class EventHandlerTests(unittest.TestCase):
         when(mock_state_machine).test_state(msg=any_value()).thenReturn(None)
 
         event = {'cmd': 'update',
-                 'state': 'test_state',
-                 'tracking_id': '123',
-                 'message': None,
-                 'type': 'event',
-                 'id': 'cmd'}
+                     'state': 'test_state',
+                     'tracking_id': '123',
+                     'message': None,
+                     'type': 'event',
+                     'id': 'cmd'}
         event_handler.on_command_execution_event('target', event)
 
         verify(mock_state_machine).test_state(msg='cmd')

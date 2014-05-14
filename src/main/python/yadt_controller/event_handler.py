@@ -122,11 +122,11 @@ class EventHandler(object):
         try:
             self._pretty_print_event(event)
             self._output_error_report(event)
-            self._output_error_info(event)
+            self._output_call_info(event)
             self._output_service_change(event)
             self._apply_state_transition_to_state_machine(event)
-        except:
-            pass
+        except Exception as e:
+            logger.debug("Error while processing event : %s" % e)
 
     def on_waiting_command_execution(self, event):
         pass
@@ -202,15 +202,15 @@ class EventHandler(object):
     def _event_is_an_error_report(self, event):
         return event.get('id') == 'cmd' and event.get('state') == 'failed' and event.get('message')
 
-    def _output_error_info(self, event):
-        if self._event_is_an_error_info(event):
-            logger.info('*' * 5 + 'Error info' + '*' * 5)
-            logger.info(' Target: %s' % event.get('target'))
-            logger.info(' Host: %s' % event.get('host'))
-            logger.info(' Logfile: %s' % event.get('log_file'))
+    def _output_call_info(self, event):
+        if self._event_is_a_call_info(event):
+            logger.info('*' * 5 + 'Yadtshell call info' + '*' * 5)
+            logger.info(' Affected target: %s' % event.get('target'))
+            logger.info(' Host executing the command: %s' % event.get('host'))
+            logger.info(' Logfile is at : %s' % event.get('log_file'))
 
-    def _event_is_an_error_info(self, event):
-        return event.get('id') == 'error-info'
+    def _event_is_a_call_info(self, event):
+        return event.get('id') == 'call-info'
 
     def _apply_state_transition_to_state_machine(self, event):
         if event.get('state'):
