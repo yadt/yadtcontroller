@@ -85,7 +85,6 @@ class CallInfoTests(unittest.TestCase):
 
         self.assertEqual(logger.info.call_args_list,
                          [
-                             call('*****Yadtshell call info*****'),
                              call(' Affected target: target'),
                              call(' Host executing the command: some-machine'),
                              call(' Logfile is at : /path/to/logfile')

@@ -204,7 +204,6 @@ class EventHandler(object):
 
     def _output_call_info(self, event):
         if self._event_is_a_call_info(event):
-            logger.info('*' * 5 + 'Yadtshell call info' + '*' * 5)
             logger.info(' Affected target: %s' % event.get('target'))
             logger.info(' Host executing the command: %s' % event.get('host'))
             logger.info(' Logfile is at : %s' % event.get('log_file'))
