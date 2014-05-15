@@ -87,7 +87,7 @@ class CallInfoTests(unittest.TestCase):
                          [
                              call(' Affected target: target'),
                              call(' Host executing the command: some-machine'),
-                             call(' Logfile is at : /path/to/logfile')
+                             call(' Logfile on some-machine is at : /path/to/logfile')
                          ])
 
 

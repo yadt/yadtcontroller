@@ -206,7 +206,7 @@ class EventHandler(object):
         if self._event_is_a_call_info(event):
             logger.info(' Affected target: %s' % event.get('target'))
             logger.info(' Host executing the command: %s' % event.get('host'))
-            logger.info(' Logfile is at : %s' % event.get('log_file'))
+            logger.info(' Logfile on %s is at : %s' % (event.get('host'), event.get('log_file')))
 
     def _event_is_a_call_info(self, event):
         return event.get('id') == 'call-info'
