@@ -93,8 +93,8 @@ def run():
     if parsed_options.get(COMMAND_ARGUMENT):
         waiting_timeout = int(parsed_options[WAITING_TIMEOUT_ARGUMENT])
         if waiting_timeout < MINIMAL_WAITING_TIMEOUT:
-            message = 'Given waiting timeout (%rs) is less than minimal allowed timeout (%rs), ' \
-                      'using the minimal timeout instead.'
+            message = ('Given waiting timeout (%rs) is less than minimal allowed timeout (%rs), ' +
+                       'using the minimal timeout instead.')
             logger.warning(
                 message % (waiting_timeout,
                            MINIMAL_WAITING_TIMEOUT))
@@ -106,8 +106,8 @@ def run():
         tracking_id = _add_generated_tracking_id_to_arguments(
             arguments, event_handler)
 
-        message = 'Requesting execution of {0} with arguments {1} on target {2}. Will wait {3} seconds for the ' \
-                  'command to start, and {4} seconds for the command to complete.'
+        message = ('Requesting execution of {0} with arguments {1} on target {2}. Will wait {3} seconds for the ' +
+                   'command to start, and {4} seconds for the command to complete.')
         logger.debug(message.format(command_to_execute,
                                     arguments,
                                     event_handler.target,
