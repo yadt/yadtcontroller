@@ -93,9 +93,11 @@ def run():
     if parsed_options.get(COMMAND_ARGUMENT):
         waiting_timeout = int(parsed_options[WAITING_TIMEOUT_ARGUMENT])
         if waiting_timeout < MINIMAL_WAITING_TIMEOUT:
+            message = 'Given waiting timeout (%rs) is less than minimal allowed timeout (%rs), ' \
+                      'using the minimal timeout instead.'
             logger.warning(
-                'Given waiting timeout (%rs) is less than minimal allowed timeout (%rs), using the minimal timeout instead.' % (waiting_timeout,
-                                                                                                                                MINIMAL_WAITING_TIMEOUT))
+                message % (waiting_timeout,
+                           MINIMAL_WAITING_TIMEOUT))
             waiting_timeout = MINIMAL_WAITING_TIMEOUT
         pending_timeout = int(parsed_options[PENDING_TIMEOUT_ARGUMENT])
         command_to_execute = parsed_options[COMMAND_ARGUMENT]
