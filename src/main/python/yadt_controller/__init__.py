@@ -56,6 +56,7 @@ MINIMAL_WAITING_TIMEOUT = 30
 
 
 from logging import basicConfig, INFO, DEBUG, WARN, getLogger
+
 from docopt import docopt, parse_defaults
 
 from configuration import BROADCASTER_HOST_KEY, BROADCASTER_PORT_KEY, TARGET_KEY, load
