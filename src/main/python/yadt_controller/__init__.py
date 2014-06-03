@@ -35,8 +35,7 @@ Options:
 --teamcity    Use TeamCity progress messages.
 --broadcaster-host=<host>   Override broadcaster host to use for publishing [default: localhost].
 --broadcaster-port=<port>   Override broadcaster port to use for publishing [default: 8081].
---config-file=<config_file> Load configuration from this file                         [default:\
- /etc/yadtshell/controller.cfg].
+--config-file=<config_file> Load configuration from this file               [default: /etc/yadtshell/controller.cfg].
 
 """
 
