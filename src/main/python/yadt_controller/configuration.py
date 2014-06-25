@@ -27,7 +27,7 @@
 __author__ = 'Marcel Wolf, Maximilien Riehl, Michael Gruber'
 
 from yadtcommons.configuration import YadtConfigParser, ConfigurationException
-from logging import getLogger
+from logging import getLogger, WARN
 
 SECTION_BROADCASTER = 'broadcaster'
 
@@ -36,6 +36,7 @@ BROADCASTER_PORT_KEY = 'broadcaster-port'
 TARGET_KEY = 'target'
 
 logger = getLogger('configuration')
+logger.setLevel(WARN)
 
 
 class ControllerConfigLoader (object):
