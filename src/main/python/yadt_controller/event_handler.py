@@ -31,6 +31,8 @@ import sys
 from execution_state_machine import create_execution_state_machine_with_callbacks
 
 logger = logging.getLogger('event_handler')
+broadcaster_logger = logging.getLogger('broadcaster')
+broadcaster_logger.setLevel(logging.WARN)
 
 
 class EventHandler(object):
