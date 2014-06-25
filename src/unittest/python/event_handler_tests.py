@@ -270,9 +270,11 @@ class EventHandlerTests(unittest.TestCase):
 
     def test_should_log_error_when_waiting_execution_request_times_out(self):
         event_handler = EventHandler('host', 8081, 'target')
+        event_handler.execution_state_machine = mock()
         event_handler.waiting_timeout = 42
         event_handler.command_to_execute = '/usr/bin/true'
         event_handler.arguments = ['foo', 'bar']
+        event_handler.execution_state_machine.current = 'waiting'
         when(yadt_controller.event_handler.reactor).stop().thenReturn(None)
         when(yadt_controller.event_handler.logger).error(
             any_value()).thenReturn(None)
