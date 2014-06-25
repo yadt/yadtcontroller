@@ -53,6 +53,8 @@ class EventHandler(object):
         self.host = host
         self.port = port
         self.target = target
+        self.remote_host = None
+        self.remote_log_file = None
         self.exit_code = None
 
     def initialize_for_info_request(self, timeout=5):
@@ -74,7 +76,7 @@ class EventHandler(object):
         self.waiting_timeout = waiting_timeout
         self.pending_timeout = pending_timeout
         self.command_to_execute = command_to_execute
-        self.arguments = arguments
+        self.arguments = arguments or []
 
         self._prepare_broadcast_client()
 
@@ -93,7 +95,12 @@ class EventHandler(object):
         reactor.callLater(
             self.waiting_timeout, self.execution_state_machine.waiting_timeout)
         reactor.callWhenRunning(self.wamp_broadcaster.connect)
+        self.display_summary("Requesting")
         reactor.run()
+        if self.exit_code != 0:
+            self.display_summary("FAILED")
+        else:
+            self.display_summary("Success")
         sys.exit(self.exit_code)
 
     def on_info_timeout(self, timeout):
@@ -202,15 +209,17 @@ class EventHandler(object):
             logger.error('*' * 5 + 'Error report' + '*' * 5)
             for error_message_line in event.get('message').split('\n'):
                 logger.error(error_message_line)
+            logger.error("See also full log on {0} : {1}".format(self.remote_host,
+                                                                 self.remote_log_file))
 
     def _event_is_an_error_report(self, event):
         return event.get('id') == 'cmd' and event.get('state') == 'failed' and event.get('message')
 
     def _output_call_info(self, event):
         if self._event_is_a_call_info(event):
-            logger.info(' Affected target: %s' % event.get('target'))
-            logger.info(' Host executing the command: %s' % event.get('host'))
-            logger.info(' Logfile on %s is at : %s' % (event.get('host'), event.get('log_file')))
+            self.remote_host = event.get('host')
+            self.remote_log_file = event.get('log_file')
+            logger.info('Logfile on %s is at : %s' % (self.remote_host, self.remote_log_file))
 
     def _event_is_a_call_info(self, event):
         return event.get('id') == 'call-info'
@@ -243,3 +252,10 @@ class EventHandler(object):
                                                               event.get(
                                                                   'state'),
                                                               payload])))
+
+    def display_summary(self, prefix):
+        short_arguments = filter(lambda argument: not argument.startswith("--tracking-id"), self.arguments)
+        commandline = "{0} {1}".format(self.command_to_execute, " ".join(short_arguments))
+        logger.info("{0}: '{1}' on target {2}".format(prefix,
+                                                      commandline,
+                                                      self.target))

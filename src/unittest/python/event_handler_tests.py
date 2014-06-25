@@ -85,9 +85,7 @@ class CallInfoTests(unittest.TestCase):
 
         self.assertEqual(logger.info.call_args_list,
                          [
-                             call(' Affected target: target'),
-                             call(' Host executing the command: some-machine'),
-                             call(' Logfile on some-machine is at : /path/to/logfile')
+                             call('Logfile on some-machine is at : /path/to/logfile')
                          ])
 
 
