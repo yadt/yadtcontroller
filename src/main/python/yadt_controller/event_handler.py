@@ -178,7 +178,7 @@ class EventHandler(object):
             self.target, self.command_to_execute, self.arguments)
 
     def on_execution_waiting_timeout(self, event):
-        if self.execution_state_machine.current == 'waiting':
+        if self.execution_state_machine.current != 'waiting':
             return  # if we are in the pending state we don't care about waiting anymore
         logger.error('Did not get any response from a yadt receiver - '
                      'the command "{0} {1}" was not started within {2} seconds'.format(self.command_to_execute,
