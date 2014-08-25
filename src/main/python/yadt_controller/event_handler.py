@@ -110,6 +110,8 @@ class EventHandler(object):
         reactor.stop()
 
     def on_info(self, target, info_event):
+        if info_event["id"] != "full-update":
+            return
         import json
         info_json = json.dumps(info_event)
         print(info_json)

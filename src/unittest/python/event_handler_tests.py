@@ -204,9 +204,21 @@ class EventHandlerTests(unittest.TestCase):
         when(yadt_controller.event_handler.reactor).run().thenReturn(None)
 
         event_handler = EventHandler('hostname', 12345, 'target')
-        event_handler.on_info('some-target', 'an-info-event')
+        event_handler.on_info('some-target', {'id': 'full-update'})
 
         verify(yadt_controller.event_handler.reactor).stop()
+
+    @patch('__builtin__.print')
+    def test_oninfo_should_not_stop_reactor_when_event_is_not_fullupdate(self, _):
+        when(yadt_controller.event_handler.reactor).stop().thenReturn(None)
+        when(yadt_controller.event_handler.reactor).callWhenRunning(
+            any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).run().thenReturn(None)
+
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.on_info('some-target', {'id': 'not-full-update'})
+
+        verify(yadt_controller.event_handler.reactor, never).stop()
 
     def test_should_start_reactor(self):
         when(yadt_controller.event_handler.reactor).callWhenRunning(
