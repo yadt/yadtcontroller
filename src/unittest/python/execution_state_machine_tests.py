@@ -75,3 +75,12 @@ class ExecutionStateMachineTests(unittest.TestCase):
         fsm.waiting_timeout()
         fsm.request()
         self.assertEqual(fsm.current, 'failure')
+
+    def test_should_not_fail_with_stacktrace_timing_out_after_success(self):
+        id = lambda x: x
+        fsm = create_execution_state_machine_with_callbacks(id, id, id, id, id, id, id)
+        fsm.request()
+        fsm.started()
+        fsm.finished()
+        fsm.waiting_timeout()
+        self.assertEqual(fsm.current, 'success')
