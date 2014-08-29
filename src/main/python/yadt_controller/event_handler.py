@@ -109,16 +109,29 @@ class EventHandler(object):
         self.exit_code = 1
         reactor.stop()
 
-    def on_info(self, target, info_event):
-        if info_event["id"] != "full-update":
+    def on_info(self, *args):
+        try:
+            # Wamp v1: onEvent is callbacked with topic and event
+            target, event = args
+        except ValueError:
+            # Wamp v2: onEvent is callbacked with event
+            event, = args
+        if event["id"] != "full-update":
             return
         import json
-        info_json = json.dumps(info_event)
+        info_json = json.dumps(event)
         print(info_json)
         self.exit_code = 0
         reactor.stop()
 
-    def on_command_execution_event(self, target, event):
+    def on_command_execution_event(self, *args):
+        try:
+            # Wamp v1: onEvent is callbacked with topic and event
+            target, event = args
+        except ValueError as e:
+            # Wamp v2: onEvent is callbacked with event
+            event, = args
+
         if event.get('tracking_id') != self.tracking_id:
             if event.get('state'):
                 event_description = '{0} {1}'.format(
