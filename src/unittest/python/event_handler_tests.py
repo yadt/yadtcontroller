@@ -209,6 +209,18 @@ class EventHandlerTests(unittest.TestCase):
         verify(yadt_controller.event_handler.reactor).stop()
 
     @patch('__builtin__.print')
+    def test_oninfo_should_be_wamp_v2_compatible(self, _):
+        when(yadt_controller.event_handler.reactor).stop().thenReturn(None)
+        when(yadt_controller.event_handler.reactor).callWhenRunning(
+            any_value()).thenReturn(None)
+        when(yadt_controller.event_handler.reactor).run().thenReturn(None)
+
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.on_info({'id': 'full-update'})  # wamp v2: no topic in onEvent
+
+        verify(yadt_controller.event_handler.reactor).stop()
+
+    @patch('__builtin__.print')
     def test_oninfo_should_not_stop_reactor_when_event_is_not_fullupdate(self, _):
         when(yadt_controller.event_handler.reactor).stop().thenReturn(None)
         when(yadt_controller.event_handler.reactor).callWhenRunning(
@@ -461,6 +473,22 @@ class EventHandlerTests(unittest.TestCase):
                               'uri': 'service://host/service'}]}
 
         event_handler.on_command_execution_event('target', event)
+
+        verify(yadt_controller.event_handler.logger).\
+            debug(
+                'Event "service-change state=up uri=service://host/service" received')
+
+    def test_on_command_execution_event_should_be_wamp_v2_compatible(self):
+        event_handler = EventHandler('hostname', 12345, 'target')
+        event_handler.tracking_id = '123'
+        event = {'id': 'service-change',
+                 'type': 'event',
+                 'target': 'target',
+                 'tracking_id': '123',
+                 'payload': [{'state': 'up',
+                              'uri': 'service://host/service'}]}
+
+        event_handler.on_command_execution_event(event)  # wamp v2: no topic in onEvent
 
         verify(yadt_controller.event_handler.logger).\
             debug(
