@@ -32,7 +32,7 @@ from execution_state_machine import create_execution_state_machine_with_callback
 
 logger = logging.getLogger('event_handler')
 broadcaster_logger = logging.getLogger('broadcaster')
-broadcaster_logger.setLevel(logging.WARN)
+broadcaster_logger.setLevel(logging.DEBUG)
 
 
 class EventHandler(object):
@@ -93,7 +93,6 @@ class EventHandler(object):
             self.publish_execution_request)
         reactor.callLater(
             self.waiting_timeout, self.execution_state_machine.waiting_timeout)
-        reactor.callWhenRunning(self.wamp_broadcaster.connect)
         self.display_summary("Requesting")
         reactor.run()
         if self.exit_code != 0:
