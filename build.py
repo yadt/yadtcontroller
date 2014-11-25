@@ -46,7 +46,7 @@ def set_properties(project):
 
     project.depends_on('docopt')
     project.depends_on('yadtcommons')
-    project.depends_on('yadtbroadcast-client')
+    project.depends_on('yadtbroadcast-client-wamp2')
     project.depends_on('Twisted')
     project.depends_on('fysom')
 
