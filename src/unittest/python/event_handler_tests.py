@@ -157,19 +157,6 @@ class EventHandlerTests(unittest.TestCase):
         verify(yadt_controller.event_handler).WampBroadcaster(
             'hostname', 12345, 'target')
 
-    def test_should_add_connect_callback_to_reactor(self):
-        when(yadt_controller.event_handler.reactor).callWhenRunning(
-            any_value()).thenReturn(None)
-        when(yadt_controller.event_handler.reactor).run().thenReturn(None)
-        when(yadt_controller.event_handler.sys).exit(
-            any_value()).thenReturn(None)
-
-        event_handler = EventHandler('hostname', 12345, 'target')
-        event_handler.initialize_for_info_request()
-
-        verify(yadt_controller.event_handler.reactor).callWhenRunning(
-            self.wampbroadcaster.connect)
-
     def test_should_set_onevent_callback_when_initializing_wamp_broadcaster(self):
         when(yadt_controller.event_handler.reactor).callWhenRunning(
             any_value()).thenReturn(None)
@@ -449,18 +436,6 @@ class EventHandlerTests(unittest.TestCase):
 
         verify(yadt_controller.event_handler.logger).error(
             'The command failed.')
-
-    def test_should_schedule_broadcaster_connect_when_initializing_command_execution(self):
-        event_handler = EventHandler('hostname', 12345, 'target')
-        when(event_handler)._prepare_broadcast_client().thenReturn(None)
-        mock_broadcaster = mock()
-        mock_broadcaster.connect = lambda: None
-
-        event_handler.wamp_broadcaster = mock_broadcaster
-        event_handler.initialize_for_execution_request()
-
-        verify(yadt_controller.event_handler.reactor).callWhenRunning(
-            event_handler.wamp_broadcaster.connect)
 
     def test_on_command_execution_event_should_log_payload_if_present(self):
         event_handler = EventHandler('hostname', 12345, 'target')
