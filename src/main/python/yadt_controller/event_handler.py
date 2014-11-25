@@ -60,7 +60,6 @@ class EventHandler(object):
     def initialize_for_info_request(self, timeout=5):
         self._prepare_broadcast_client()
         self.wamp_broadcaster.onEvent = self.on_info
-        reactor.callWhenRunning(self.wamp_broadcaster.connect)
         reactor.callLater(timeout, self.on_info_timeout, timeout)
         reactor.run()
         sys.exit(self.exit_code)
