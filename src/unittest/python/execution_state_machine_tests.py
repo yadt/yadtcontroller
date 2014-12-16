@@ -15,6 +15,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+
 from yadt_controller.execution_state_machine import create_execution_state_machine_with_callbacks
 
 

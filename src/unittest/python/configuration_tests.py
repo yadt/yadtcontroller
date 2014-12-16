@@ -20,11 +20,11 @@ __author__ = 'Marcel Wolf, Michael Gruber'
 import unittest
 
 from mock import Mock, call, patch
+from yadtcommons.configuration import YadtConfigParser, ConfigurationException
 
 from yadt_controller.configuration import (SECTION_BROADCASTER,
                                            ControllerConfigLoader,
                                            load)
-from yadtcommons.configuration import YadtConfigParser, ConfigurationException
 
 
 class ControllerConfigLoaderTests (unittest.TestCase):

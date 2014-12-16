@@ -14,8 +14,10 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from requests import get, codes
 import logging
+
+from requests import get, codes
+
 
 logger = logging.getLogger("rest_api")
 logging.getLogger("requests").setLevel(logging.ERROR)

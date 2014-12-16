@@ -14,9 +14,9 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from mock import patch, Mock
-
 from unittest import TestCase
+
+from mock import patch, Mock
 
 from yadt_controller.rest_api import (EndpointException, TargetInfoEndpoint)
 

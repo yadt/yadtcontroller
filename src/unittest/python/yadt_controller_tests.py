@@ -17,6 +17,7 @@
 from __future__ import print_function
 
 import unittest
+
 from mockito import when, verify, unstub, any as any_value, mock, never
 from mock import patch
 from docopt import Option

@@ -16,9 +16,11 @@
 from __future__ import print_function
 import unittest
 import sys
+
 from yadtbroadcastclient import WampBroadcaster
 from mock import patch, call
 from mockito import when, verify, unstub, any as any_value, mock, never
+
 import yadt_controller.configuration
 from yadt_controller.event_handler import EventHandler
 

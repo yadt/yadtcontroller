@@ -15,7 +15,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+
 from mockito import mock, verify
+
 from yadt_controller.terminal import TeamCityProgressMessageHandler
 
 

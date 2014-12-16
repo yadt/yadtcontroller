@@ -26,8 +26,10 @@
 
 __author__ = 'Marcel Wolf, Maximilien Riehl, Michael Gruber'
 
-from yadtcommons.configuration import YadtConfigParser, ConfigurationException
 from logging import getLogger, WARN
+
+from yadtcommons.configuration import YadtConfigParser, ConfigurationException
+
 
 SECTION_BROADCASTER = 'broadcaster'
 
