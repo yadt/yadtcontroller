@@ -1,5 +1,5 @@
 #   yadtcontroller
-#   Copyright (C) 2013 Immobilien Scout GmbH
+#   Copyright (C) 2014 Immobilien Scout GmbH
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ def set_properties(project):
     project.depends_on('yadtbroadcast-client-wamp2')
     project.depends_on('Twisted')
     project.depends_on('fysom')
+    project.depends_on('requests')
 
     project.set_property("verbose", True)
     project.get_property('filter_resources_glob').append('**/yadt_controller/__init__.py')

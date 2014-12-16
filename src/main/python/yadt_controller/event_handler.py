@@ -23,10 +23,12 @@
 """
 
 from __future__ import print_function
-from yadtbroadcastclient import WampBroadcaster
-from twisted.internet import reactor
+
 import logging
 import sys
+
+from yadtbroadcastclient import WampBroadcaster
+from twisted.internet import reactor
 
 from execution_state_machine import create_execution_state_machine_with_callbacks
 
@@ -56,13 +58,6 @@ class EventHandler(object):
         self.remote_host = None
         self.remote_log_file = None
         self.exit_code = None
-
-    def initialize_for_info_request(self, timeout=5):
-        self._prepare_broadcast_client()
-        self.wamp_broadcaster.onEvent = self.on_info
-        reactor.callLater(timeout, self.on_info_timeout, timeout)
-        reactor.run()
-        sys.exit(self.exit_code)
 
     def initialize_for_execution_request(self, waiting_timeout=None,
                                          pending_timeout=None,
@@ -100,27 +95,6 @@ class EventHandler(object):
         else:
             self.display_summary("Success")
         sys.exit(self.exit_code)
-
-    def on_info_timeout(self, timeout):
-        logger.error(
-            'Timed out after %s seconds waiting for an info event.' % str(timeout))
-        self.exit_code = 1
-        reactor.stop()
-
-    def on_info(self, *args):
-        try:
-            # Wamp v1: onEvent is callbacked with topic and event
-            target, event = args
-        except ValueError:
-            # Wamp v2: onEvent is callbacked with event
-            event, = args
-        if event["id"] != "full-update":
-            return
-        import json
-        info_json = json.dumps(event)
-        print(info_json)
-        self.exit_code = 0
-        reactor.stop()
 
     def on_command_execution_event(self, *args):
         try:

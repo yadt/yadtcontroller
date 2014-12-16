@@ -14,12 +14,16 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import print_function
+
 import unittest
 from mockito import when, verify, unstub, any as any_value, mock, never
+from mock import patch
 from docopt import Option
 
 import yadt_controller
 from yadt_controller.event_handler import EventHandler
+from yadt_controller.rest_api import TargetInfoEndpoint
 
 
 class YadtControllerTests(unittest.TestCase):
@@ -37,6 +41,8 @@ class YadtControllerTests(unittest.TestCase):
                                                                          'broadcaster-port': 12345})
         self.event_handler_mock = mock(EventHandler)
         when(yadt_controller).EventHandler(any_value(), any_value(), any_value()).thenReturn(self.event_handler_mock)
+        self.info_endpoint_mock = mock(TargetInfoEndpoint)
+        when(yadt_controller).TargetInfoEndpoint(any_value(), any_value(), any_value()).thenReturn(self.info_endpoint_mock)
 
     def tearDown(self):
         unstub()
@@ -67,16 +73,32 @@ class YadtControllerTests(unittest.TestCase):
 
         verify(yadt_controller).load('/configuration', yadt_controller._get_defaults())
 
-    def test_should_initialize_for_info_when_info_option_was_given(self):
+    @patch("yadt_controller.print", create=True)
+    def test_should_request_info_when_info_option_was_given(self, _):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
-                                                                                   '--broadcaster-host': None,
+                                                                                   '--broadcaster-host': 'any-host',
                                                                                    '<target>': 'target',
                                                                                    '--broadcaster-port': '1234',
                                                                                    '<waiting_timeout>': '2',
                                                                                    'info': True})
         yadt_controller.run()
 
-        verify(self.event_handler_mock).initialize_for_info_request(timeout=2)
+        verify(yadt_controller).TargetInfoEndpoint(any_value(), any_value(), any_value())
+
+    @patch("yadt_controller.print", create=True)
+    def test_should_fetch_and_print_info_when_requesting_info(self, print_function):
+        when(yadt_controller.rest_api.TargetInfoEndpoint).fetch(any_value()).thenReturn('blob of target info')
+        when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
+                                                                                   '--broadcaster-host': 'any-host',
+                                                                                   '<target>': 'target',
+                                                                                   '--broadcaster-port': '1234',
+                                                                                   '<waiting_timeout>': '2',
+                                                                                   'info': True})
+        yadt_controller.run()
+
+        verify(yadt_controller.rest_api.TargetInfoEndpoint).fetch(2)
+        print_function.assert_called_with('blob of target info')
+
 
     def test_should_set_logging_to_debug_when_verbose_option_is_given(self):
         when(yadt_controller).docopt(any_value(), version=any_value()).thenReturn({'--config-file': '/configuration',
@@ -84,7 +106,7 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    '<target>': 'target',
                                                                                    '--broadcaster-port': '1234',
                                                                                    '<waiting_timeout>': '2',
-                                                                                   'info': True,
+                                                                                   'info': False,
                                                                                    '--verbose': True})
         yadt_controller.run()
 
@@ -96,7 +118,7 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    '<target>': 'target',
                                                                                    '--broadcaster-port': '1234',
                                                                                    '<waiting_timeout>': '2',
-                                                                                   'info': True,
+                                                                                   'info': False,
                                                                                    '--verbose': False,
                                                                                    '--quiet': True})
         yadt_controller.run()
@@ -109,7 +131,7 @@ class YadtControllerTests(unittest.TestCase):
                                                                                    '<target>': 'target',
                                                                                    '--broadcaster-port': '1234',
                                                                                    '<waiting_timeout>': '2',
-                                                                                   'info': True,
+                                                                                   'info': False,
                                                                                    '--verbose': True,
                                                                                    '--quiet': True})
         yadt_controller.run()

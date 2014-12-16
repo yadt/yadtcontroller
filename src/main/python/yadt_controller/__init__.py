@@ -14,6 +14,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 """
 yadtcontroller
 
@@ -39,6 +40,8 @@ Options:
 
 """
 
+from __future__ import print_function
+
 __version__ = '${version}'
 
 DEFAULT_CONFIGURATION_FILE = '/etc/yadtshell/controller.cfg'
@@ -54,7 +57,7 @@ INFO_COMMAND = 'info'
 
 MINIMAL_WAITING_TIMEOUT = 30
 
-
+import sys
 from logging import basicConfig, INFO, DEBUG, WARN, getLogger
 
 from docopt import docopt, parse_defaults
@@ -63,6 +66,7 @@ from configuration import BROADCASTER_HOST_KEY, BROADCASTER_PORT_KEY, TARGET_KEY
 from yadt_controller.event_handler import EventHandler
 from yadt_controller.tracking import generate_tracking_id
 from yadt_controller.terminal import TeamCityProgressMessageHandler
+from yadt_controller.rest_api import TargetInfoEndpoint, EndpointException
 
 
 def run():
@@ -86,10 +90,16 @@ def run():
 
     if parsed_options.get(INFO_COMMAND):
         waiting_timeout = int(parsed_options.get(WAITING_TIMEOUT_ARGUMENT))
-        info_command_debug_message = 'Requesting info on target {0}. Will wait at most {1} second(s) for a reply.'
-        logger.debug(info_command_debug_message.format(
-            event_handler.target, waiting_timeout))
-        event_handler.initialize_for_info_request(timeout=waiting_timeout)
+        logger.debug('Requesting info on target {0}.'.format(
+            event_handler.target))
+        try:
+            endpoint = TargetInfoEndpoint(event_handler.target,
+                                          event_handler.host,
+                                          event_handler.port)
+            print(endpoint.fetch(waiting_timeout))
+        except EndpointException as e:
+            logger.error(e)
+            sys.exit(1)
 
     if parsed_options.get(COMMAND_ARGUMENT):
         waiting_timeout = int(parsed_options[WAITING_TIMEOUT_ARGUMENT])
