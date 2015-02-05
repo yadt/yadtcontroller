@@ -158,6 +158,9 @@ class EventHandler(object):
         reactor.callLater(10, reactor.stop)
 
     def publish_execution_request(self):
+        request_was_already_sent = self.execution_state_machine.current != "idle"
+        if request_was_already_sent:
+            return
         logger.debug('Publishing execution request : execute {0} on {1}'.format(
             self.command_to_execute, self.target))
         self.execution_state_machine.request(

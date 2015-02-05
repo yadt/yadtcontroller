@@ -220,6 +220,16 @@ class EventHandlerTests(unittest.TestCase):
         self.assertEqual(
             event_handler.execution_state_machine.current, 'waiting')
 
+    def test_publish_execution_request_should_not_trigger_request_when_state_machine_is_not_idle(self):
+        event_handler = EventHandler('host', 8081, 'target')
+        event_handler.initialize_for_execution_request()
+        event_handler.execution_state_machine.request() # now not idle but "waiting"
+
+        event_handler.publish_execution_request()
+
+        self.assertEqual(
+            event_handler.execution_state_machine.current, 'waiting')
+
     def test_publish_execution_request_should_trigger_broadcaster_publish(self):
         event_handler = EventHandler('hostname', 12345, 'target')
         when(event_handler)._prepare_broadcast_client().thenReturn(None)
