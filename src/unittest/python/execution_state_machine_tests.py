@@ -20,31 +20,31 @@ from yadt_controller.execution_state_machine import create_execution_state_machi
 
 
 class ExecutionStateMachineTests(unittest.TestCase):
-    call_count = 0
+    calls = []
 
     def setUp(self):
-        self.call_count = 0
+        self.calls = []
 
     def waiting_callback(self):
-        self.call_count += 1
+        self.calls.append("waiting")
 
     def failed_callback(self):
-        self.call_count += 1
+        self.calls.append("failed")
 
     def pending_callback(self):
-        self.call_count += 1
+        self.calls.append("pending")
 
     def success_callback(self):
-        self.call_count += 1
+        self.calls.append("success")
 
     def failure_callback(self):
-        self.call_count += 1
+        self.calls.append("failure")
 
     def waiting_timeout_callback(self):
-        self.call_count += 1
+        self.calls.append("waiting_timeout")
 
     def pending_timeout_callback(self):
-        self.call_count += 1
+        self.calls.append("pending_timeout")
 
     def test_should_create_state_machine_with_callbacks(self):
         fsm = create_execution_state_machine_with_callbacks(
@@ -64,7 +64,15 @@ class ExecutionStateMachineTests(unittest.TestCase):
         fsm.onwaiting_timeout()
         fsm.onpending_timeout()
 
-        self.assertEqual(self.call_count, 7)
+        self.assertEqual(
+            self.calls, 
+            ['waiting',
+             'failed',
+             'pending',
+             'success',
+             'failure',
+             'waiting_timeout',
+             'pending_timeout'])
 
     def test_state_machine_should_be_in_idle_state_initially(self):
         fsm = create_execution_state_machine_with_callbacks(
